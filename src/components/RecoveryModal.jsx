@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { setRecoveryCode, markRecoveryCodeSet } from '../utils/recovery'
 
 // mode: 'set' | 'restore'
-export default function RecoveryModal({ mode, userId, onRestore, onClose }) {
+export default function RecoveryModal({ mode, onRestore, onClose }) {
   const [code, setCode] = useState('')
   const [status, setStatus] = useState('idle') // idle | loading | success | error
   const [errMsg, setErrMsg] = useState('')
@@ -13,12 +13,11 @@ export default function RecoveryModal({ mode, userId, onRestore, onClose }) {
   const handleSubmit = async () => {
     const trimmed = code.trim()
     if (!trimmed) return
-    if (isSet && !userId) { setErrMsg('用户初始化中，请稍后再试'); return }
     setStatus('loading')
     setErrMsg('')
     try {
       if (isSet) {
-        await setRecoveryCode(trimmed, userId)
+        await setRecoveryCode(trimmed)
         markRecoveryCodeSet()
         setStatus('success')
       } else {
@@ -26,12 +25,14 @@ export default function RecoveryModal({ mode, userId, onRestore, onClose }) {
         // onRestore handles close on success
       }
     } catch (e) {
-      if (e.message === 'CODE_TAKEN') {
-        setErrMsg('此恢复码已被占用，换一个试试')
+      if (e.message === 'NOT_AUTHED') {
+        setErrMsg('登录状态异常，请刷新页面后重试')
+      } else if (e.message === 'CODE_TAKEN') {
+        setErrMsg('此工号已被占用，换一个试试')
       } else if (e.message === 'NOT_FOUND') {
         setErrMsg('没有找到对应的记录，请检查恢复码')
       } else {
-        setErrMsg('操作失败，请稍后重试')
+        setErrMsg(`操作失败：${e.message}`)
       }
       setStatus('error')
     }
