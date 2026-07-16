@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import supabase from '../lib/supabase'
-import { findUserByCode, hasRecoveryCode } from '../utils/recovery'
+import { setRecoveryCode, findUserByCode, hasRecoveryCode, markRecoveryCodeSet } from '../utils/recovery'
 
 const todayStr = () => new Date().toISOString().slice(0, 10)
 
@@ -230,8 +230,14 @@ export default function useStats() {
     localStorage.setItem('quit_recovery_set', '1')
   }, [])
 
+  const setRecovery = useCallback(async (code) => {
+    const uid = userIdRef.current
+    await setRecoveryCode(uid, code)
+    markRecoveryCodeSet()
+  }, [])
+
   return {
     today, history, addQuit, addAchievement, stopFish, loadHistory, loadMonthHistory,
-    userId, showRestorePrompt, setShowRestorePrompt, restoreFromCode,
+    userId, showRestorePrompt, setShowRestorePrompt, restoreFromCode, setRecovery,
   }
 }

@@ -14,7 +14,7 @@ export default function App() {
   const [showSetRecovery, setShowSetRecovery] = useState(false)
   const {
     today, history, addQuit, addAchievement, stopFish, loadHistory, loadMonthHistory,
-    userId, showRestorePrompt, setShowRestorePrompt, restoreFromCode,
+    userId, showRestorePrompt, setShowRestorePrompt, restoreFromCode, setRecovery,
   } = useStats()
 
   useEffect(() => {
@@ -56,6 +56,7 @@ export default function App() {
       {showSetRecovery && (
         <RecoveryModal
           mode="set"
+          onSet={setRecovery}
           onClose={() => setShowSetRecovery(false)}
         />
       )}
