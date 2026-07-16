@@ -3,6 +3,24 @@ import supabase from '../lib/supabase'
 
 const todayStr = () => new Date().toISOString().slice(0, 10)
 
+const LS_KEY = (date) => `quit_stats_${date}`
+
+function loadLocal(date) {
+  try {
+    const raw = localStorage.getItem(LS_KEY(date))
+    if (raw) return JSON.parse(raw)
+  } catch {}
+  return null
+}
+
+function saveLocal(date, data) {
+  try {
+    localStorage.setItem(LS_KEY(date), JSON.stringify(data))
+  } catch {}
+}
+
+const DEFAULT_TODAY = { quit_count: 0, achievement_count: 0, fish_minutes: 0 }
+
 async function fetchToday(uid) {
   const { data, error } = await supabase
     .from('quit_daily_records')
@@ -14,75 +32,81 @@ async function fetchToday(uid) {
   return data
 }
 
+async function upsertRecord(uid, date, record) {
+  const { error } = await supabase.from('quit_daily_records').upsert(
+    { user_id: uid, date, ...record, updated_at: new Date().toISOString() },
+    { onConflict: 'user_id,date' }
+  )
+  if (error) console.error('upsertRecord error:', error)
+}
+
 export default function useStats() {
-  const [userId, setUserId] = useState(null)
-  const [today, setToday] = useState({ quit_count: 0, achievement_count: 0, fish_minutes: 0 })
+  const date = todayStr()
+  const [today, setToday] = useState(() => loadLocal(date) || { ...DEFAULT_TODAY })
   const [history, setHistory] = useState([])
   const userIdRef = useRef(null)
+  const todayRef = useRef(today)
+
+  // keep ref in sync so callbacks always have latest value
+  useEffect(() => {
+    todayRef.current = today
+    saveLocal(date, today)
+  }, [today, date])
 
   useEffect(() => {
-    // 监听 auth 状态变化，session 恢复或新登录都会触发
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       const uid = session?.user?.id
       if (!uid) return
       userIdRef.current = uid
-      setUserId(uid)
-      const record = await fetchToday(uid)
-      if (record) setToday(record)
+
+      // fetch from Supabase; if remote has higher counts, use remote
+      const remote = await fetchToday(uid)
+      if (remote) {
+        setToday(prev => {
+          const merged = {
+            quit_count: Math.max(prev.quit_count, remote.quit_count || 0),
+            achievement_count: Math.max(prev.achievement_count, remote.achievement_count || 0),
+            fish_minutes: Math.max(prev.fish_minutes, remote.fish_minutes || 0),
+          }
+          saveLocal(date, merged)
+          return merged
+        })
+      } else {
+        // no remote record yet — push local data up
+        const local = loadLocal(date)
+        if (local && (local.quit_count > 0 || local.achievement_count > 0 || local.fish_minutes > 0)) {
+          upsertRecord(uid, date, local)
+        }
+      }
     })
 
-    // 触发初始检查：有 session 则复用，无则匿名登录
-    supabase.auth.getSession().then(async ({ data: { session }, error }) => {
-      if (error) console.error('getSession error:', error)
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) {
-        const { error: signInError } = await supabase.auth.signInAnonymously()
-        if (signInError) console.error('signInAnonymously error:', signInError)
-        // onAuthStateChange 会处理后续逻辑
+        await supabase.auth.signInAnonymously()
       }
     })
 
     return () => subscription.unsubscribe()
-  }, [])
+  }, [date])
 
-  // 用 RPC 原子自增，避免并发点击时覆盖问题
-  const increment = useCallback(async (field) => {
-    const uid = userIdRef.current
-    if (!uid) return
-    const { error } = await supabase.rpc('quit_increment_field', {
-      p_user_id: uid,
-      p_date: todayStr(),
-      p_field: field,
+  const updateField = useCallback((field, delta = 1) => {
+    setToday(prev => {
+      const next = { ...prev, [field]: prev[field] + delta }
+      saveLocal(date, next)
+      // async sync to Supabase
+      const uid = userIdRef.current
+      if (uid) upsertRecord(uid, date, next)
+      return next
     })
-    if (error) {
-      console.error('increment error:', error)
-      // RPC 不存在时降级为 upsert
-      await supabase.from('quit_daily_records').upsert(
-        { user_id: uid, date: todayStr(), updated_at: new Date().toISOString() },
-        { onConflict: 'user_id,date' }
-      )
-    }
-  }, [])
+  }, [date])
 
-  const addQuit = useCallback(() => {
-    setToday(prev => ({ ...prev, quit_count: prev.quit_count + 1 }))
-    increment('quit_count')
-  }, [increment])
-
-  const addAchievement = useCallback(() => {
-    setToday(prev => ({ ...prev, achievement_count: prev.achievement_count + 1 }))
-    increment('achievement_count')
-  }, [increment])
+  const addQuit = useCallback(() => updateField('quit_count'), [updateField])
+  const addAchievement = useCallback(() => updateField('achievement_count'), [updateField])
 
   const stopFish = useCallback((minutes) => {
-    setToday(prev => ({ ...prev, fish_minutes: prev.fish_minutes + minutes }))
-    const uid = userIdRef.current
-    if (!uid) return
-    // 摸鱼分钟数累加，直接 upsert 当前值
-    supabase.from('quit_daily_records').upsert(
-      { user_id: uid, date: todayStr(), fish_minutes: minutes, updated_at: new Date().toISOString() },
-      { onConflict: 'user_id,date' }
-    ).then(({ error }) => { if (error) console.error('stopFish error:', error) })
-  }, [])
+    if (!minutes) return
+    updateField('fish_minutes', minutes)
+  }, [updateField])
 
   const loadHistory = useCallback(async (days = 7) => {
     const uid = userIdRef.current
