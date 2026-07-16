@@ -123,14 +123,6 @@ export default function Stats({ history, loadHistory, loadMonthHistory, onSetRec
         )}
       </AnimatePresence>
 
-      {/* 数据保护入口 */}
-      <button
-        onClick={onSetRecovery}
-        style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0', textAlign: 'left' }}
-      >
-        <span style={{ fontSize: 12, color: '#CCC' }}>🔑 设置恢复码，防止清缓存后数据丢失</span>
-      </button>
-
       {/* 近7天折线图，放在底部作为补充 */}
       {chartData.length > 0 && (
         <div style={{ background: '#fff', borderRadius: 12, padding: '10px 4px 4px 4px', border: '1px solid #ECEAE6' }}>
@@ -160,6 +152,30 @@ export default function Stats({ history, loadHistory, loadMonthHistory, onSetRec
           </ResponsiveContainer>
         </div>
       )}
+
+      {/* 数据保护入口 */}
+      <button
+        onClick={onSetRecovery}
+        style={{
+          background: '#fff',
+          border: '1px solid #ECEAE6',
+          borderRadius: 12,
+          padding: '12px 16px',
+          width: '100%',
+          textAlign: 'left',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 8,
+        }}
+      >
+        <span style={{ fontSize: 16 }}>🔑</span>
+        <div>
+          <div style={{ fontSize: 13, fontWeight: 600, color: '#333' }}>绑定工号</div>
+          <div style={{ fontSize: 11, color: '#AAA', marginTop: 2 }}>换设备或清缓存后凭工号找回数据</div>
+        </div>
+        <span style={{ marginLeft: 'auto', color: '#CCC', fontSize: 16 }}>›</span>
+      </button>
 
     </div>
   )

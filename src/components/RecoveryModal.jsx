@@ -59,7 +59,7 @@ export default function RecoveryModal({ mode, userId, onRestore, onClose }) {
           <div className="text-center py-4 flex flex-col gap-3">
             <div style={{ fontSize: 40 }}>✅</div>
             <p style={{ fontSize: 15, fontWeight: 600, color: '#1A1A1A' }}>恢复码已保存</p>
-            <p style={{ fontSize: 13, color: '#AAA' }}>清除缓存后，输入此码即可找回数据</p>
+            <p style={{ fontSize: 13, color: '#AAA' }}>凭工号即可在任意设备找回数据</p>
             <button
               onClick={onClose}
               style={{ marginTop: 8, background: '#1A1A1A', color: '#fff', border: 'none', borderRadius: 12, padding: '12px', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}
@@ -71,7 +71,7 @@ export default function RecoveryModal({ mode, userId, onRestore, onClose }) {
           <>
             <div className="flex items-center justify-between mb-4">
               <h3 style={{ fontSize: 16, fontWeight: 700, color: '#1A1A1A' }}>
-                {isSet ? '设置恢复码' : '输入恢复码'}
+                {isSet ? '绑定工号' : '输入工号找回数据'}
               </h3>
               {onClose && (
                 <button onClick={onClose} style={{ color: '#AAA', fontSize: 20, lineHeight: 1 }}>×</button>
@@ -80,15 +80,15 @@ export default function RecoveryModal({ mode, userId, onRestore, onClose }) {
 
             <p style={{ fontSize: 13, color: '#888', marginBottom: 16, lineHeight: 1.6 }}>
               {isSet
-                ? '设置一个你容易记住的恢复码（数字、文字均可）。清除浏览器缓存后，用此码可以找回历史数据。'
-                : '请输入之前设置的恢复码，找回你的历史数据。'}
+                ? '输入你的工号作为数据标识。换设备或清除缓存后，凭工号即可找回所有记录。'
+                : '输入你绑定的工号，找回历史数据。'}
             </p>
 
             <input
               type="text"
               value={code}
               onChange={e => setCode(e.target.value)}
-              placeholder={isSet ? '例如：上班好累123' : '输入恢复码'}
+              placeholder={isSet ? '输入工号，例如：EMP001' : '输入工号'}
               maxLength={20}
               onKeyDown={e => e.key === 'Enter' && handleSubmit()}
               style={{
@@ -118,7 +118,7 @@ export default function RecoveryModal({ mode, userId, onRestore, onClose }) {
 
             {isSet && (
               <p style={{ fontSize: 11, color: '#CCC', marginBottom: 12 }}>
-                请牢记此恢复码，系统无法帮你找回它
+                工号就是你的数据钥匙，请确保记得它
               </p>
             )}
 
@@ -138,7 +138,7 @@ export default function RecoveryModal({ mode, userId, onRestore, onClose }) {
                 transition: 'background 0.15s',
               }}
             >
-              {status === 'loading' ? '处理中…' : isSet ? '保存恢复码' : '找回数据'}
+              {status === 'loading' ? '处理中…' : isSet ? '绑定工号' : '找回数据'}
             </button>
           </>
         )}
