@@ -71,7 +71,28 @@ export default function useStats() {
   useEffect(() => {
     const uid = getDeviceId()
 
-    fetchToday(uid).then(remote => {
+    async function init() {
+      // 一次性迁移：把旧 Supabase Auth session 下的数据迁到设备 UUID
+      const migrationKey = 'quit_auth_migrated'
+      if (!localStorage.getItem(migrationKey)) {
+        const { data: { session } } = await supabase.auth.getSession()
+        const oldUid = session?.user?.id
+        if (oldUid && oldUid !== uid) {
+          const from = new Date(Date.now() - 365 * 86400000).toISOString().slice(0, 10)
+          const { data: oldData } = await supabase
+            .from('quit_daily_records')
+            .select('date,quit_count,achievement_count,fish_minutes')
+            .eq('user_id', oldUid)
+            .gte('date', from)
+          if (oldData && oldData.length > 0) {
+            oldData.forEach(r => saveLocal(r.date, r))
+            await Promise.all(oldData.map(r => upsertRecord(uid, r.date, r)))
+          }
+        }
+        localStorage.setItem(migrationKey, '1')
+      }
+
+      const remote = await fetchToday(uid)
       if (remote) {
         setToday(prev => {
           const merged = {
@@ -91,7 +112,9 @@ export default function useStats() {
           setShowRestorePrompt(true)
         }
       }
-    })
+    }
+
+    init()
   }, [date])
 
   const updateField = useCallback((field, delta = 1) => {
