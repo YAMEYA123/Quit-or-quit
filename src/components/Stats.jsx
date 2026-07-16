@@ -51,64 +51,30 @@ export default function Stats({ history, loadHistory, loadMonthHistory }) {
   return (
     <div className="flex flex-col gap-4 py-4 pb-6">
 
-      {/* 近7天迷你折线图 */}
-      {chartData.length > 0 ? (
-        <div style={{ background: '#fff', borderRadius: 12, padding: '10px 4px 4px 4px', border: '1px solid #ECEAE6' }}>
-          <div className="flex items-center justify-between px-3 mb-1">
-            <span style={{ fontSize: 11, color: '#AAA', fontWeight: 600, letterSpacing: '0.05em' }}>近 7 天</span>
-            <div className="flex gap-3">
-              {[['崩溃', '#C94B1A'], ['成就', '#4A7C59'], ['摸鱼分', '#5B8DB8']].map(([label, color]) => (
-                <div key={label} className="flex items-center gap-1">
-                  <div style={{ width: 6, height: 6, borderRadius: '50%', background: color }} />
-                  <span style={{ fontSize: 10, color: '#BBB' }}>{label}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-          <ResponsiveContainer width="100%" height={110}>
-            <LineChart data={chartData} margin={{ left: -24, right: 8, top: 4, bottom: 0 }}>
-              <XAxis dataKey="date" tick={{ fontSize: 9, fill: '#CCC' }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 9, fill: '#CCC' }} axisLine={false} tickLine={false} allowDecimals={false} width={36} />
-              <Tooltip
-                contentStyle={{ border: '1px solid #EEE', borderRadius: 8, fontSize: 11 }}
-                cursor={{ stroke: '#F0EDE8' }}
-              />
-              <Line type="monotone" dataKey="崩溃" stroke="#C94B1A" strokeWidth={1.5} dot={false} />
-              <Line type="monotone" dataKey="成就" stroke="#4A7C59" strokeWidth={1.5} dot={false} />
-              <Line type="monotone" dataKey="摸鱼" stroke="#5B8DB8" strokeWidth={1.5} dot={false} />
-            </LineChart>
-          </ResponsiveContainer>
+      {/* 月份汇总：导航 + 大数字，放在最顶部 */}
+      <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #ECEAE6', padding: '14px 16px' }}>
+        {/* 月份导航 */}
+        <div className="flex items-center justify-between mb-3">
+          <button onClick={prevMonth} style={{ color: '#888', fontSize: 20, lineHeight: 1, padding: '2px 4px', fontWeight: 300 }}>‹</button>
+          <span style={{ fontSize: 14, color: '#333', fontWeight: 700 }}>
+            {viewYear}年{viewMonth}月
+          </span>
+          <button
+            onClick={nextMonth}
+            style={{ color: isCurrentMonth ? '#DDD' : '#888', fontSize: 20, lineHeight: 1, padding: '2px 4px', fontWeight: 300 }}
+            disabled={isCurrentMonth}
+          >›</button>
         </div>
-      ) : (
-        <div style={{ background: '#fff', borderRadius: 12, padding: '16px', textAlign: 'center', border: '1px solid #ECEAE6' }}>
-          <p style={{ fontSize: 12, color: '#CCC' }}>去敲木鱼，数据会出现在这里</p>
+        {/* 三个大数字 */}
+        <div className="grid grid-cols-3 divide-x" style={{ borderTop: '1px solid #F0EDE8', paddingTop: 12 }}>
+          <BigStat color="#C94B1A" value={monthQuit} unit="次" label="不想干了" />
+          <BigStat color="#4A7C59" value={monthAch} unit="个" label="小成就" />
+          <BigStat color="#5B8DB8" value={monthFish} unit="分钟" label="摸鱼" />
         </div>
-      )}
+      </div>
 
-      {/* 月历区域 */}
+      {/* 月历 */}
       <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #ECEAE6', overflow: 'hidden' }}>
-
-        {/* 月份导航 + 汇总数字 */}
-        <div style={{ padding: '12px 14px 10px', borderBottom: '1px solid #F0EDE8' }}>
-          <div className="flex items-center justify-between">
-            <button onClick={prevMonth} style={{ color: '#888', fontSize: 18, lineHeight: 1, padding: '2px 4px', fontWeight: 300 }}>‹</button>
-            <span style={{ fontSize: 14, color: '#333', fontWeight: 700 }}>
-              {viewYear}年{viewMonth}月
-            </span>
-            <button
-              onClick={nextMonth}
-              style={{ color: isCurrentMonth ? '#DDD' : '#888', fontSize: 18, lineHeight: 1, padding: '2px 4px', fontWeight: 300 }}
-              disabled={isCurrentMonth}
-            >›</button>
-          </div>
-          <div className="flex justify-center gap-5 mt-2">
-            <MonthStat dot="#C94B1A" label="崩溃" value={monthQuit} unit="次" />
-            <MonthStat dot="#4A7C59" label="成就" value={monthAch} unit="个" />
-            <MonthStat dot="#5B8DB8" label="摸鱼" value={monthFish} unit="分" />
-          </div>
-        </div>
-
-        {/* 日历格子 */}
         <div style={{ padding: '10px 12px 8px' }}>
           <CalendarHeatmap
             year={viewYear}
@@ -118,8 +84,6 @@ export default function Stats({ history, loadHistory, loadMonthHistory }) {
             onSelect={setSelectedDate}
           />
         </div>
-
-        {/* 图例 */}
         <div className="flex items-center gap-1.5 pb-3 pr-4 justify-end">
           <span style={{ fontSize: 10, color: '#CCC' }}>少</span>
           {['#F0EDE8', '#F5C5A3', '#E8874A', '#C94B1A'].map(c => (
@@ -159,17 +123,48 @@ export default function Stats({ history, loadHistory, loadMonthHistory }) {
         )}
       </AnimatePresence>
 
+      {/* 近7天折线图，放在底部作为补充 */}
+      {chartData.length > 0 && (
+        <div style={{ background: '#fff', borderRadius: 12, padding: '10px 4px 4px 4px', border: '1px solid #ECEAE6' }}>
+          <div className="flex items-center justify-between px-3 mb-1">
+            <span style={{ fontSize: 11, color: '#AAA', fontWeight: 600, letterSpacing: '0.05em' }}>近 7 天趋势</span>
+            <div className="flex gap-3">
+              {[['崩溃', '#C94B1A'], ['成就', '#4A7C59'], ['摸鱼分', '#5B8DB8']].map(([label, color]) => (
+                <div key={label} className="flex items-center gap-1">
+                  <div style={{ width: 6, height: 6, borderRadius: '50%', background: color }} />
+                  <span style={{ fontSize: 10, color: '#BBB' }}>{label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <ResponsiveContainer width="100%" height={110}>
+            <LineChart data={chartData} margin={{ left: -24, right: 8, top: 4, bottom: 0 }}>
+              <XAxis dataKey="date" tick={{ fontSize: 9, fill: '#CCC' }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 9, fill: '#CCC' }} axisLine={false} tickLine={false} allowDecimals={false} width={36} />
+              <Tooltip
+                contentStyle={{ border: '1px solid #EEE', borderRadius: 8, fontSize: 11 }}
+                cursor={{ stroke: '#F0EDE8' }}
+              />
+              <Line type="monotone" dataKey="崩溃" stroke="#C94B1A" strokeWidth={1.5} dot={false} />
+              <Line type="monotone" dataKey="成就" stroke="#4A7C59" strokeWidth={1.5} dot={false} />
+              <Line type="monotone" dataKey="摸鱼" stroke="#5B8DB8" strokeWidth={1.5} dot={false} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      )}
+
     </div>
   )
 }
 
-function MonthStat({ dot, label, value, unit }) {
+function BigStat({ color, value, unit, label }) {
   return (
-    <div className="flex items-baseline gap-1">
-      <div style={{ width: 6, height: 6, borderRadius: '50%', background: dot, flexShrink: 0, marginBottom: 1 }} />
-      <span style={{ fontSize: 11, color: '#AAA' }}>{label}</span>
-      <span style={{ fontSize: 15, fontWeight: 700, color: '#333' }}>{value}</span>
-      <span style={{ fontSize: 10, color: '#BBB' }}>{unit}</span>
+    <div className="flex flex-col items-center gap-0.5 px-2">
+      <div className="flex items-baseline gap-0.5">
+        <span style={{ fontSize: 26, fontWeight: 700, color, lineHeight: 1 }}>{value}</span>
+        <span style={{ fontSize: 11, color: '#AAA' }}>{unit}</span>
+      </div>
+      <span style={{ fontSize: 11, color: '#BBB' }}>{label}</span>
     </div>
   )
 }
