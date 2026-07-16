@@ -14,7 +14,7 @@ export default function App() {
   const [showSetRecovery, setShowSetRecovery] = useState(false)
   const {
     today, history, addQuit, addAchievement, stopFish, loadHistory, loadMonthHistory,
-    userId, showRestorePrompt, setShowRestorePrompt, restoreFromCode, setRecovery,
+    showRestorePrompt, setShowRestorePrompt, restoreFromCode, setRecovery,
   } = useStats()
 
   useEffect(() => {
