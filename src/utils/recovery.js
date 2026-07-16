@@ -32,6 +32,11 @@ export function hasRecoveryCode() {
   return !!localStorage.getItem('quit_recovery_set')
 }
 
-export function markRecoveryCodeSet() {
+export function markRecoveryCodeSet(code) {
   localStorage.setItem('quit_recovery_set', '1')
+  if (code) localStorage.setItem('quit_recovery_code', code)
+}
+
+export function getSavedCode() {
+  return localStorage.getItem('quit_recovery_code') || null
 }

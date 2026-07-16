@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import supabase from '../lib/supabase'
-import { setRecoveryCode, findUserByCode, hasRecoveryCode, markRecoveryCodeSet } from '../utils/recovery'
+import { setRecoveryCode, findUserByCode, hasRecoveryCode, markRecoveryCodeSet, getSavedCode } from '../utils/recovery'
 import { getDeviceId } from '../utils/deviceId'
 
 const todayStr = () => new Date().toISOString().slice(0, 10)
@@ -223,11 +223,12 @@ export default function useStats() {
 
   const setRecovery = useCallback(async (code) => {
     await setRecoveryCode(getDeviceId(), code)
-    markRecoveryCodeSet()
+    markRecoveryCodeSet(code)
   }, [])
 
   return {
     today, history, addQuit, addAchievement, stopFish, loadHistory, loadMonthHistory,
     showRestorePrompt, setShowRestorePrompt, restoreFromCode, setRecovery,
+    savedCode: getSavedCode(),
   }
 }

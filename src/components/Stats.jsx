@@ -3,7 +3,7 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'rec
 import { motion, AnimatePresence } from 'framer-motion'
 import CalendarHeatmap from './CalendarHeatmap'
 
-export default function Stats({ history, loadHistory, loadMonthHistory, onSetRecovery }) {
+export default function Stats({ history, loadHistory, loadMonthHistory, onSetRecovery, savedCode }) {
   const now = new Date()
   const [viewYear, setViewYear] = useState(now.getFullYear())
   const [viewMonth, setViewMonth] = useState(now.getMonth() + 1)
@@ -169,10 +169,14 @@ export default function Stats({ history, loadHistory, loadMonthHistory, onSetRec
           gap: 8,
         }}
       >
-        <span style={{ fontSize: 16 }}>🔑</span>
+        <span style={{ fontSize: 16 }}>{savedCode ? '✅' : '🔑'}</span>
         <div>
-          <div style={{ fontSize: 13, fontWeight: 600, color: '#333' }}>绑定工号</div>
-          <div style={{ fontSize: 11, color: '#AAA', marginTop: 2 }}>换设备或清缓存后凭工号找回数据</div>
+          <div style={{ fontSize: 13, fontWeight: 600, color: '#333' }}>
+            {savedCode ? `工号：${savedCode}` : '绑定工号'}
+          </div>
+          <div style={{ fontSize: 11, color: '#AAA', marginTop: 2 }}>
+            {savedCode ? '点击可修改绑定的工号' : '换设备或清缓存后凭工号找回数据'}
+          </div>
         </div>
         <span style={{ marginLeft: 'auto', color: '#CCC', fontSize: 16 }}>›</span>
       </button>
