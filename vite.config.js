@@ -25,6 +25,13 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,svg}'],
         skipWaiting: true,
         clientsClaim: true,
+        runtimeCaching: [
+          {
+            // Supabase API 请求不走 SW 缓存，直接过网络
+            urlPattern: /^https:\/\/[^/]+\.supabase\.co\/.*/,
+            handler: 'NetworkOnly',
+          },
+        ],
       },
     }),
   ],
