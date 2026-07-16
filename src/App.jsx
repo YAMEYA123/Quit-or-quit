@@ -16,7 +16,7 @@ export default function App() {
         <h1 className="text-lg font-bold" style={{ color: '#FF8FAB' }}>不想干了计数器</h1>
       </header>
 
-      <main className="flex-1 overflow-y-auto px-4">
+      <main className="flex-1 overflow-y-auto px-4 flex flex-col">
         {tab === 'main' && (
           <WoodFish count={today.quit_count} onQuit={addQuit} />
         )}

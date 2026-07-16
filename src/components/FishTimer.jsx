@@ -38,10 +38,14 @@ export default function FishTimer({ fishMinutes, onStop }) {
   useEffect(() => () => clearInterval(timerRef.current), [])
 
   return (
-    <div className="flex flex-col items-center gap-6 py-8">
-      <div className="text-4xl">🐟</div>
-      <h2 className="text-xl font-bold" style={{ color: '#7EC8E3' }}>摸鱼计时器</h2>
-      <p className="text-sm" style={{ color: '#a0856a' }}>今日累计摸鱼 {fishMinutes} 分钟</p>
+    <div className="flex-1 flex flex-col items-center justify-center gap-6 py-8">
+      <div className="text-6xl">🐟</div>
+      <h2 className="text-2xl font-bold" style={{ color: '#7EC8E3' }}>摸鱼计时器</h2>
+
+      <div className="px-6 py-3 rounded-2xl text-center" style={{ background: '#EBF8FC' }}>
+        <span className="text-3xl font-bold" style={{ color: '#7EC8E3' }}>{fishMinutes}</span>
+        <span className="text-sm ml-1" style={{ color: '#a0856a' }}>分钟 🌊</span>
+      </div>
 
       <AnimatePresence mode="wait">
         {running ? (
@@ -52,22 +56,22 @@ export default function FishTimer({ fishMinutes, onStop }) {
             exit={{ opacity: 0 }}
             className="flex flex-col items-center gap-4 w-full"
           >
-            <div className="relative w-full h-14 overflow-hidden rounded-2xl bg-blue-50">
+            <div className="relative w-full h-20 overflow-hidden rounded-2xl bg-blue-50">
               <motion.div
                 animate={{ x: ['calc(-100% - 60px)', 'calc(100vw + 60px)'] }}
                 transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
-                className="absolute top-1/2 -translate-y-1/2 text-3xl"
+                className="absolute top-1/2 -translate-y-1/2 text-5xl"
               >
                 🐟
               </motion.div>
             </div>
-            <div className="text-3xl font-mono font-bold" style={{ color: '#7EC8E3' }}>
+            <div className="text-5xl font-mono font-bold" style={{ color: '#7EC8E3' }}>
               {fmt(elapsed)}
             </div>
             <motion.button
               whileTap={{ scale: 0.93 }}
               onClick={stop}
-              className="px-8 py-4 rounded-full text-white font-bold text-lg shadow-lg"
+              className="px-10 py-5 rounded-full text-white font-bold text-xl shadow-xl"
               style={{ background: '#7EC8E3' }}
             >
               摸完了 ✋
@@ -84,7 +88,7 @@ export default function FishTimer({ fishMinutes, onStop }) {
             <motion.button
               whileTap={{ scale: 0.93 }}
               onClick={start}
-              className="px-8 py-4 rounded-full text-white font-bold text-lg shadow-lg"
+              className="px-10 py-5 rounded-full text-white font-bold text-xl shadow-xl"
               style={{ background: 'linear-gradient(135deg, #7EC8E3, #5ba8c8)' }}
             >
               开始摸鱼 🐟

@@ -18,7 +18,7 @@ export default function Stats({ history, loadHistory }) {
   }))
 
   return (
-    <div className="flex flex-col gap-6 py-6 px-4">
+    <div className="flex flex-col gap-6 py-6 px-4 pb-4">
       <h2 className="text-xl font-bold text-center" style={{ color: '#FF8FAB' }}>近7天统计</h2>
 
       {data.length > 0 ? (

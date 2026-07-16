@@ -61,17 +61,21 @@ export default function Achievement({ count, onAdd }) {
   }
 
   return (
-    <div className="flex flex-col items-center gap-6 py-8">
+    <div className="flex-1 flex flex-col items-center justify-center gap-6 py-8">
       <Confetti active={showConfetti} />
 
-      <div className="text-4xl">🏆</div>
-      <h2 className="text-xl font-bold" style={{ color: '#FF8FAB' }}>今日小成就</h2>
-      <p className="text-sm" style={{ color: '#a0856a' }}>今天已记录 {count} 个高光时刻</p>
+      <div className="text-6xl">🏆</div>
+      <h2 className="text-2xl font-bold" style={{ color: '#FF8FAB' }}>今日小成就</h2>
+
+      <div className="px-6 py-3 rounded-2xl text-center" style={{ background: '#FFF0D0' }}>
+        <span className="text-3xl font-bold" style={{ color: '#FFD166' }}>{count}</span>
+        <span className="text-sm ml-1" style={{ color: '#a0856a' }}>个高光时刻 ✨</span>
+      </div>
 
       <motion.button
         whileTap={{ scale: 0.92 }}
         onClick={handleClick}
-        className="px-8 py-4 rounded-full text-white font-bold text-lg shadow-lg"
+        className="px-10 py-5 rounded-full text-white font-bold text-xl shadow-xl"
         style={{ background: 'linear-gradient(135deg, #FFD166, #FF8FAB)' }}
       >
         我今天好棒！🏆
