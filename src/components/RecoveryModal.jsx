@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { setRecoveryCode, markRecoveryCodeSet } from '../utils/recovery'
 
@@ -38,7 +39,7 @@ export default function RecoveryModal({ mode, onRestore, onClose }) {
     }
   }
 
-  return (
+  return createPortal(
     <div
       className="fixed inset-0 flex items-end justify-center"
       style={{ zIndex: 80, background: 'rgba(0,0,0,0.4)' }}
@@ -145,6 +146,7 @@ export default function RecoveryModal({ mode, onRestore, onClose }) {
           </>
         )}
       </motion.div>
-    </div>
+    </div>,
+    document.body
   )
 }

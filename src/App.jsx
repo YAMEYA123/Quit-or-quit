@@ -46,22 +46,19 @@ export default function App() {
 
       <BottomNav tab={tab} setTab={setTab} />
 
-      <AnimatePresence>
-        {showRestorePrompt && (
-          <RecoveryModal
-            mode="restore"
-            onRestore={restoreFromCode}
-            onClose={() => setShowRestorePrompt(false)}
-          />
-        )}
-        {showSetRecovery && (
-          <RecoveryModal
-            mode="set"
-            userId={userId}
-            onClose={() => setShowSetRecovery(false)}
-          />
-        )}
-      </AnimatePresence>
+      {showRestorePrompt && (
+        <RecoveryModal
+          mode="restore"
+          onRestore={restoreFromCode}
+          onClose={() => setShowRestorePrompt(false)}
+        />
+      )}
+      {showSetRecovery && (
+        <RecoveryModal
+          mode="set"
+          onClose={() => setShowSetRecovery(false)}
+        />
+      )}
     </div>
   )
 }
