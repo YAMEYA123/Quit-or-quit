@@ -73,23 +73,33 @@ export default function useStats() {
 
     async function init() {
       // 一次性迁移：把旧 Supabase Auth session 下的数据迁到设备 UUID
-      const migrationKey = 'quit_auth_migrated'
+      // v2：换版本号强制重跑，覆盖之前可能因 FK 约束静默失败的迁移
+      const migrationKey = 'quit_auth_migrated_v2'
       if (!localStorage.getItem(migrationKey)) {
-        const { data: { session } } = await supabase.auth.getSession()
-        const oldUid = session?.user?.id
-        if (oldUid && oldUid !== uid) {
-          const from = new Date(Date.now() - 365 * 86400000).toISOString().slice(0, 10)
-          const { data: oldData } = await supabase
-            .from('quit_daily_records')
-            .select('date,quit_count,achievement_count,fish_minutes')
-            .eq('user_id', oldUid)
-            .gte('date', from)
-          if (oldData && oldData.length > 0) {
-            oldData.forEach(r => saveLocal(r.date, r))
-            await Promise.all(oldData.map(r => upsertRecord(uid, r.date, r)))
+        try {
+          const { data: { session } } = await supabase.auth.getSession()
+          const oldUid = session?.user?.id
+          if (oldUid && oldUid !== uid) {
+            const from = new Date(Date.now() - 365 * 86400000).toISOString().slice(0, 10)
+            const { data: oldData, error } = await supabase
+              .from('quit_daily_records')
+              .select('date,quit_count,achievement_count,fish_minutes')
+              .eq('user_id', oldUid)
+              .gte('date', from)
+            if (!error && oldData && oldData.length > 0) {
+              // 先写 localStorage，不管 Supabase 是否成功数据都能显示
+              oldData.forEach(r => saveLocal(r.date, r))
+              setHistory(loadLocalHistory(7))
+              // 再尝试写到 Supabase 新 UUID 下（需要先在 Supabase 删除 FK 约束）
+              await Promise.all(oldData.map(r => upsertRecord(uid, r.date, r)))
+              localStorage.setItem(migrationKey, '1')
+            }
+          } else {
+            localStorage.setItem(migrationKey, '1')
           }
+        } catch (e) {
+          console.error('migration error:', e)
         }
-        localStorage.setItem(migrationKey, '1')
       }
 
       const remote = await fetchToday(uid)
