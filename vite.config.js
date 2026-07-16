@@ -10,7 +10,7 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       manifest: {
-        name: '不想干了计数器',
+        name: '今天也不想干了吗',
         short_name: '不想干了',
         description: '职场解压神器',
         theme_color: '#FF8FAB',

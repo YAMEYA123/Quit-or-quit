@@ -20,7 +20,7 @@ export default function App() {
   return (
     <div className="flex flex-col min-h-svh pb-20" style={{ background: '#FFF9F5' }}>
       <header className="px-4 py-3 text-center">
-        <h1 className="text-lg font-bold" style={{ color: '#FF8FAB' }}>不想干了计数器</h1>
+        <h1 className="text-lg font-bold" style={{ color: '#FF8FAB' }}>今天也不想干了吗</h1>
       </header>
 
       <main className="flex-1 overflow-y-auto px-4 flex flex-col">
