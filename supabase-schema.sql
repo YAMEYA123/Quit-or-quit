@@ -37,7 +37,7 @@ alter table quit_event_log enable row level security;
 -- ============================================================
 
 create table if not exists quit_recovery_codes (
-  code_hash  text not null,
+  code_hash  text not null unique,   -- 唯一：同一工号只能被一个设备绑定
   user_id    uuid not null,
   created_at timestamptz default now(),
   primary key (user_id)
