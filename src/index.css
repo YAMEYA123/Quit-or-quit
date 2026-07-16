@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+:root {
+  --color-pink: #FF8FAB;
+  --color-wood: #C8956C;
+  --color-fish: #7EC8E3;
+  --color-gold: #FFD166;
+  --color-bg: #FFF9F5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-bg);
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+@keyframes fish-swim {
+  0% { transform: translateX(-60px); }
+  100% { transform: translateX(calc(100vw + 60px)); }
+}
+
+.fish-swim {
+  animation: fish-swim 4s linear infinite;
+}
+
+@keyframes confetti-fall {
+  0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+.confetti-piece {
+  animation: confetti-fall linear forwards;
+}
+
+@keyframes alarm-flash {
+  0%, 100% { background-color: #fff0f0; }
+  50% { background-color: #ffcccc; }
+}
+
+.alarm-flash {
+  animation: alarm-flash 0.5s ease-in-out infinite;
+}
