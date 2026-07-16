@@ -40,10 +40,23 @@ async function upsertRecord(uid, date, record) {
   if (error) console.error('upsertRecord error:', error)
 }
 
+// 从 localStorage 拼出近 N 天的历史
+function loadLocalHistory(days) {
+  const result = []
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date(Date.now() - i * 86400000).toISOString().slice(0, 10)
+    const record = loadLocal(d)
+    if (record && (record.quit_count > 0 || record.achievement_count > 0 || record.fish_minutes > 0)) {
+      result.push({ date: d, ...record })
+    }
+  }
+  return result
+}
+
 export default function useStats() {
   const date = todayStr()
   const [today, setToday] = useState(() => loadLocal(date) || { ...DEFAULT_TODAY })
-  const [history, setHistory] = useState([])
+  const [history, setHistory] = useState(() => loadLocalHistory(7))
   const userIdRef = useRef(null)
   const todayRef = useRef(today)
 
@@ -109,6 +122,9 @@ export default function useStats() {
   }, [updateField])
 
   const loadHistory = useCallback(async (days = 7) => {
+    // 先用本地数据展示，不等网络
+    setHistory(loadLocalHistory(days))
+
     const uid = userIdRef.current
     if (!uid) return
     const from = new Date(Date.now() - (days - 1) * 86400000).toISOString().slice(0, 10)
@@ -118,8 +134,24 @@ export default function useStats() {
       .eq('user_id', uid)
       .gte('date', from)
       .order('date')
-    if (error) console.error('loadHistory error:', error)
-    setHistory(data || [])
+    if (error) { console.error('loadHistory error:', error); return }
+    if (data && data.length > 0) {
+      // 合并：本地和远端取最大值
+      const localMap = {}
+      loadLocalHistory(days).forEach(r => { localMap[r.date] = r })
+      const merged = data.map(r => ({
+        ...r,
+        quit_count: Math.max(r.quit_count || 0, localMap[r.date]?.quit_count || 0),
+        achievement_count: Math.max(r.achievement_count || 0, localMap[r.date]?.achievement_count || 0),
+        fish_minutes: Math.max(r.fish_minutes || 0, localMap[r.date]?.fish_minutes || 0),
+      }))
+      // 加入只有本地没有远端的日期
+      Object.keys(localMap).forEach(d => {
+        if (!merged.find(r => r.date === d)) merged.push({ date: d, ...localMap[d] })
+      })
+      merged.sort((a, b) => a.date.localeCompare(b.date))
+      setHistory(merged)
+    }
   }, [])
 
   return { today, history, addQuit, addAchievement, stopFish, loadHistory }
