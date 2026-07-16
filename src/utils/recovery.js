@@ -5,16 +5,13 @@ async function sha256(text) {
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('')
 }
 
-export async function setRecoveryCode(userId, code) {
-  if (!userId) throw new Error('NOT_AUTHED')
-  if (!code || typeof code !== 'string') throw new Error('CODE_EMPTY')
+export async function setRecoveryCode(deviceId, code) {
   const hash = await sha256(code.trim())
   const { error } = await supabase.from('quit_recovery_codes').upsert(
-    { code_hash: hash, user_id: userId },
+    { code_hash: hash, user_id: deviceId },
     { onConflict: 'user_id' }
   )
   if (error) {
-    console.error('setRecoveryCode error:', error)
     if (error.code === '23505') throw new Error('CODE_TAKEN')
     throw new Error(error.message || JSON.stringify(error))
   }
