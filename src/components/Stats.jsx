@@ -140,7 +140,7 @@ export default function Stats({ history, loadHistory, loadMonthHistory }) {
           <ResponsiveContainer width="100%" height={110}>
             <LineChart data={chartData} margin={{ left: -24, right: 8, top: 4, bottom: 0 }}>
               <XAxis dataKey="date" tick={{ fontSize: 9, fill: '#CCC' }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 9, fill: '#CCC' }} axisLine={false} tickLine={false} allowDecimals={false} width={36} />
+              <YAxis tick={{ fontSize: 9, fill: '#CCC' }} axisLine={false} tickLine={false} allowDecimals={false} width={28} domain={[0, 'auto']} tickCount={4} />
               <Tooltip
                 contentStyle={{ border: '1px solid #EEE', borderRadius: 8, fontSize: 11 }}
                 cursor={{ stroke: '#F0EDE8' }}
