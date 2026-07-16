@@ -1,10 +1,9 @@
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { setRecoveryCode, markRecoveryCodeSet } from '../utils/recovery'
 
 // mode: 'set' | 'restore'
-export default function RecoveryModal({ mode, onRestore, onClose }) {
+export default function RecoveryModal({ mode, onSet, onRestore, onClose }) {
   const [code, setCode] = useState('')
   const [status, setStatus] = useState('idle') // idle | loading | success | error
   const [errMsg, setErrMsg] = useState('')
@@ -18,8 +17,7 @@ export default function RecoveryModal({ mode, onRestore, onClose }) {
     setErrMsg('')
     try {
       if (isSet) {
-        await setRecoveryCode(trimmed)
-        markRecoveryCodeSet()
+        await onSet(trimmed)
         setStatus('success')
       } else {
         await onRestore(trimmed)
