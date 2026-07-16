@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import useStats from './hooks/useStats'
+import { warmup } from './utils/audio'
 import WoodFish from './components/WoodFish'
 import Achievement from './components/Achievement'
 import FishTimer from './components/FishTimer'
@@ -9,6 +10,12 @@ import BottomNav from './components/BottomNav'
 export default function App() {
   const [tab, setTab] = useState('main')
   const { today, history, addQuit, addAchievement, stopFish, loadHistory } = useStats()
+
+  useEffect(() => {
+    const handler = () => { warmup(); document.removeEventListener('touchstart', handler); document.removeEventListener('click', handler) }
+    document.addEventListener('touchstart', handler, { once: true })
+    document.addEventListener('click', handler, { once: true })
+  }, [])
 
   return (
     <div className="flex flex-col min-h-svh pb-20" style={{ background: '#FFF9F5' }}>
