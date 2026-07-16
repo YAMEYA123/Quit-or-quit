@@ -19,8 +19,9 @@ export default function App() {
 
   return (
     <div className="flex flex-col min-h-svh pb-20" style={{ background: '#FFF9F5' }}>
-      <header className="px-4 py-3 text-center">
-        <h1 className="text-lg font-bold" style={{ color: '#FF8FAB' }}>今天也不想干了吗</h1>
+      <header className="px-5 pt-5 pb-3 text-center">
+        <h1 className="text-2xl font-bold" style={{ color: '#1A1A1A' }}>今天也不想干了吗</h1>
+        <p className="text-xs mt-0.5" style={{ color: '#BBB' }}>{new Date().toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' })}</p>
       </header>
 
       <main className="flex-1 overflow-y-auto px-4 flex flex-col">

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>成就 & 摸鱼页风格对比</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif; background: #F5F3F0; padding: 24px 16px; }
+  h1 { text-align: center; font-size: 15px; color: #999; font-weight: 500; margin-bottom: 24px; letter-spacing: 0.05em; }
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 700px; margin: 0 auto; }
+  .col-label { text-align: center; font-size: 12px; color: #AAA; font-weight: 600; letter-spacing: 0.08em; margin-bottom: 12px; text-transform: uppercase; }
+  .phone { background: #FFF9F5; border-radius: 20px; overflow: hidden; border: 1px solid #E8E4DF; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+  .phone-header { padding: 18px 16px 10px; text-align: center; border-bottom: 1px solid #F0EDE8; }
+  .phone-header h2 { font-size: 17px; font-weight: 700; color: #1A1A1A; }
+  .phone-header p { font-size: 11px; color: #CCC; margin-top: 2px; }
+  .phone-body { padding: 28px 20px 32px; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+  .section-label { font-size: 11px; color: #AAA; font-weight: 600; letter-spacing: 0.06em; text-align: center; margin-bottom: -8px; width: 100%; }
+
+  /* ---- 活泼版 ---- */
+  .fun-icon { font-size: 52px; line-height: 1; }
+  .fun-title { font-size: 20px; font-weight: 700; color: #FF8FAB; }
+  .fun-count-card { background: #FFF0D0; border-radius: 16px; padding: 10px 24px; text-align: center; }
+  .fun-count-card .num { font-size: 28px; font-weight: 700; color: #FFD166; }
+  .fun-count-card .unit { font-size: 13px; color: #a0856a; margin-left: 4px; }
+  .fun-btn { background: linear-gradient(135deg, #FFD166, #FF8FAB); color: white; border: none; border-radius: 50px; padding: 16px 36px; font-size: 17px; font-weight: 700; cursor: pointer; box-shadow: 0 6px 16px rgba(255,143,171,0.35); }
+  .fun-btn-blue { background: linear-gradient(135deg, #7EC8E3, #5ba8c8); }
+  .fun-count-card-blue { background: #EBF8FC; }
+  .fun-count-card-blue .num { color: #7EC8E3; }
+
+  /* ---- 克制版 ---- */
+  .calm-page { gap: 16px; }
+  .calm-top { width: 100%; background: #fff; border-radius: 12px; border: 1px solid #ECEAE6; padding: 16px 18px; }
+  .calm-top-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .calm-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .calm-top-title { font-size: 13px; font-weight: 600; color: #333; }
+  .calm-top-sub { font-size: 11px; color: #AAA; margin-top: 1px; }
+  .calm-num-row { display: flex; align-items: baseline; gap: 4px; }
+  .calm-big-num { font-size: 40px; font-weight: 700; line-height: 1; }
+  .calm-unit { font-size: 13px; color: #AAA; }
+  .calm-divider { width: 100%; height: 1px; background: #F0EDE8; }
+  .calm-btn { width: 100%; background: #1A1A1A; color: white; border: none; border-radius: 12px; padding: 15px; font-size: 15px; font-weight: 600; cursor: pointer; letter-spacing: 0.02em; }
+  .calm-btn-green { background: #4A7C59; }
+  .calm-btn-blue { background: #5B8DB8; }
+  .calm-hint { font-size: 12px; color: #BBB; text-align: center; }
+
+  /* timer */
+  .fun-timer { font-size: 44px; font-weight: 700; font-variant-numeric: tabular-nums; color: #7EC8E3; font-family: monospace; }
+  .calm-timer { font-size: 44px; font-weight: 700; font-variant-numeric: tabular-nums; color: #5B8DB8; font-family: monospace; }
+  .calm-timer-card { width: 100%; background: #fff; border-radius: 12px; border: 1px solid #ECEAE6; padding: 20px; text-align: center; }
+
+  .divider-row { grid-column: 1 / -1; height: 1px; background: #E8E4DF; margin: 8px 0; }
+  .page-label { grid-column: 1 / -1; text-align: center; font-size: 11px; color: #AAA; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
+</style>
+</head>
+<body>
+
+<h1>成就 & 摸鱼页 · 风格对比参考</h1>
+
+<div class="compare">
+  <div class="col-label">🎨 活泼版（现状）</div>
+  <div class="col-label">🪨 克制版（备选）</div>
+
+  <!-- 成就页 -->
+  <div class="page-label">— 成就页 —</div>
+
+  <!-- 活泼·成就 -->
+  <div>
+    <div class="phone">
+      <div class="phone-header">
+        <h2>今天也不想干了吗</h2>
+        <p>2026年7月16日 周四</p>
+      </div>
+      <div class="phone-body">
+        <div class="fun-icon">🏆</div>
+        <div class="fun-title">今日小成就</div>
+        <div class="fun-count-card">
+          <span class="num">3</span>
+          <span class="unit">个高光时刻 ✨</span>
+        </div>
+        <button class="fun-btn">我今天好棒！🏆</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 克制·成就 -->
+  <div>
+    <div class="phone">
+      <div class="phone-header">
+        <h2>今天也不想干了吗</h2>
+        <p>2026年7月16日 周四</p>
+      </div>
+      <div class="phone-body calm-page">
+        <div class="calm-top">
+          <div class="calm-top-row">
+            <div class="calm-dot" style="background:#4A7C59"></div>
+            <div>
+              <div class="calm-top-title">今日小成就</div>
+              <div class="calm-top-sub">记录每一个高光时刻</div>
+            </div>
+          </div>
+          <div class="calm-num-row">
+            <span class="calm-big-num" style="color:#4A7C59">3</span>
+            <span class="calm-unit">个</span>
+          </div>
+        </div>
+        <button class="calm-btn calm-btn-green">记录一个成就</button>
+        <div class="calm-hint">每一个小进步都值得被看见</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 摸鱼页 -->
+  <div class="page-label">— 摸鱼页 —</div>
+
+  <!-- 活泼·摸鱼 -->
+  <div>
+    <div class="phone">
+      <div class="phone-header">
+        <h2>今天也不想干了吗</h2>
+        <p>2026年7月16日 周四</p>
+      </div>
+      <div class="phone-body">
+        <div class="fun-icon">🐟</div>
+        <div class="fun-title" style="color:#7EC8E3">摸鱼计时器</div>
+        <div class="fun-count-card fun-count-card-blue">
+          <span class="num">45</span>
+          <span class="unit">分钟 🌊</span>
+        </div>
+        <div class="fun-timer">12:34</div>
+        <button class="fun-btn fun-btn-blue">摸完了 ✋</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 克制·摸鱼 -->
+  <div>
+    <div class="phone">
+      <div class="phone-header">
+        <h2>今天也不想干了吗</h2>
+        <p>2026年7月16日 周四</p>
+      </div>
+      <div class="phone-body calm-page">
+        <div class="calm-top">
+          <div class="calm-top-row">
+            <div class="calm-dot" style="background:#5B8DB8"></div>
+            <div>
+              <div class="calm-top-title">今日摸鱼</div>
+              <div class="calm-top-sub">累计时长</div>
+            </div>
+          </div>
+          <div class="calm-num-row">
+            <span class="calm-big-num" style="color:#5B8DB8">45</span>
+            <span class="calm-unit">分钟</span>
+          </div>
+        </div>
+        <div class="calm-timer-card">
+          <div class="calm-timer">12:34</div>
+          <div style="font-size:11px;color:#CCC;margin-top:6px">计时中</div>
+        </div>
+        <button class="calm-btn calm-btn-blue">摸完了</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p style="text-align:center;font-size:11px;color:#CCC;margin-top:28px">看完选一个，或者说"两个都不对"告诉我你想要的感觉</p>
+
+</body>
+</html>
