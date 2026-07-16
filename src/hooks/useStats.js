@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import supabase from '../lib/supabase'
+import { findUserByCode, hasRecoveryCode } from '../utils/recovery'
 
 const todayStr = () => new Date().toISOString().slice(0, 10)
 
@@ -57,6 +58,8 @@ export default function useStats() {
   const date = todayStr()
   const [today, setToday] = useState(() => loadLocal(date) || { ...DEFAULT_TODAY })
   const [history, setHistory] = useState(() => loadLocalHistory(7))
+  const [userId, setUserId] = useState(null)
+  const [showRestorePrompt, setShowRestorePrompt] = useState(false)
   const userIdRef = useRef(null)
   const todayRef = useRef(today)
 
@@ -71,6 +74,7 @@ export default function useStats() {
       const uid = session?.user?.id
       if (!uid) return
       userIdRef.current = uid
+      setUserId(uid)
 
       // fetch from Supabase; if remote has higher counts, use remote
       const remote = await fetchToday(uid)
@@ -85,10 +89,17 @@ export default function useStats() {
           return merged
         })
       } else {
-        // no remote record yet — push local data up
+        // no remote record — check if this is a fresh user who had a recovery code before
         const local = loadLocal(date)
-        if (local && (local.quit_count > 0 || local.achievement_count > 0 || local.fish_minutes > 0)) {
+        const hasLocal = local && (local.quit_count > 0 || local.achievement_count > 0 || local.fish_minutes > 0)
+        if (hasLocal) {
           upsertRecord(uid, date, local)
+        } else if (!hasRecoveryCode()) {
+          // truly new user with no local data and no recovery code set — offer restore prompt
+          // only show if user previously had a code (they cleared cache)
+          // we detect this via absence of quit_recovery_set in localStorage
+          // but since localStorage is cleared too, we show it briefly
+          setShowRestorePrompt(true)
         }
       }
     })
@@ -189,5 +200,38 @@ export default function useStats() {
     return localMap
   }, [])
 
-  return { today, history, addQuit, addAchievement, stopFish, loadHistory, loadMonthHistory }
+  // 用恢复码找回历史数据：将原 user_id 的 Supabase 数据拉取并写入本地
+  const restoreFromCode = useCallback(async (code) => {
+    const originalUid = await findUserByCode(code)
+    if (!originalUid) throw new Error('NOT_FOUND')
+
+    const currentUid = userIdRef.current
+    // 拉取原用户的近180天数据写入本地
+    const from = new Date(Date.now() - 180 * 86400000).toISOString().slice(0, 10)
+    const { data, error } = await supabase
+      .from('quit_daily_records')
+      .select('date,quit_count,achievement_count,fish_minutes')
+      .eq('user_id', originalUid)
+      .gte('date', from)
+    if (error) throw error
+    if (data) {
+      data.forEach(r => { saveLocal(r.date, r) })
+      // 将这些数据重新上传到当前匿名用户名下
+      await Promise.all(data.map(r => upsertRecord(currentUid, r.date, r)))
+    }
+    // 刷新今日数据
+    const todayRemote = data?.find(r => r.date === todayStr())
+    if (todayRemote) {
+      setToday(todayRemote)
+      saveLocal(todayStr(), todayRemote)
+    }
+    setHistory(loadLocalHistory(7))
+    setShowRestorePrompt(false)
+    localStorage.setItem('quit_recovery_set', '1')
+  }, [])
+
+  return {
+    today, history, addQuit, addAchievement, stopFish, loadHistory, loadMonthHistory,
+    userId, showRestorePrompt, setShowRestorePrompt, restoreFromCode,
+  }
 }

@@ -3,7 +3,7 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'rec
 import { motion, AnimatePresence } from 'framer-motion'
 import CalendarHeatmap from './CalendarHeatmap'
 
-export default function Stats({ history, loadHistory, loadMonthHistory }) {
+export default function Stats({ history, loadHistory, loadMonthHistory, onSetRecovery }) {
   const now = new Date()
   const [viewYear, setViewYear] = useState(now.getFullYear())
   const [viewMonth, setViewMonth] = useState(now.getMonth() + 1)
@@ -122,6 +122,14 @@ export default function Stats({ history, loadHistory, loadMonthHistory }) {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* 数据保护入口 */}
+      <button
+        onClick={onSetRecovery}
+        style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0', textAlign: 'left' }}
+      >
+        <span style={{ fontSize: 12, color: '#CCC' }}>🔑 设置恢复码，防止清缓存后数据丢失</span>
+      </button>
 
       {/* 近7天折线图，放在底部作为补充 */}
       {chartData.length > 0 && (
