@@ -232,17 +232,19 @@ export default function useStats() {
 
   const setRecovery = useCallback(async (code) => {
     let uid = userIdRef.current
+    let diagInfo = `ref=${uid ? 'ok' : 'null'}`
     if (!uid) {
-      // auth callback may not have fired yet; read session from localStorage first
-      const { data: { session } } = await supabase.auth.getSession()
+      const { data: { session }, error: sesErr } = await supabase.auth.getSession()
       uid = session?.user?.id
+      diagInfo += ` ses=${uid ? 'ok' : (sesErr?.message || 'null')}`
       if (!uid) {
-        // no session at all — create anonymous session now and wait for it
-        const { data } = await supabase.auth.signInAnonymously()
+        const { data, error: anonErr } = await supabase.auth.signInAnonymously()
         uid = data?.user?.id
+        diagInfo += ` anon=${uid ? 'ok' : (anonErr?.message || 'null')}`
       }
       if (uid) userIdRef.current = uid
     }
+    if (!uid) throw new Error(`NOT_AUTHED:${diagInfo}`)
     await setRecoveryCode(uid, code)
     markRecoveryCodeSet()
   }, [])

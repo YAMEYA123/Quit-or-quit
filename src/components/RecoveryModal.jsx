@@ -24,8 +24,8 @@ export default function RecoveryModal({ mode, onSet, onRestore, onClose }) {
         // onRestore handles close on success
       }
     } catch (e) {
-      if (e.message === 'NOT_AUTHED') {
-        setErrMsg('登录状态异常，请刷新页面后重试')
+      if (e.message?.startsWith('NOT_AUTHED')) {
+        setErrMsg(`登录异常(${e.message})，请刷新后重试`)
       } else if (e.message === 'CODE_EMPTY') {
         setErrMsg('请输入工号后再提交')
       } else if (e.message === 'CODE_TAKEN') {
