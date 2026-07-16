@@ -13,6 +13,7 @@ export default function RecoveryModal({ mode, userId, onRestore, onClose }) {
   const handleSubmit = async () => {
     const trimmed = code.trim()
     if (!trimmed) return
+    if (isSet && !userId) { setErrMsg('用户初始化中，请稍后再试'); return }
     setStatus('loading')
     setErrMsg('')
     try {

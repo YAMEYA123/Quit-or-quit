@@ -54,7 +54,7 @@ export default function App() {
             onClose={() => setShowRestorePrompt(false)}
           />
         )}
-        {showSetRecovery && userId && (
+        {showSetRecovery && (
           <RecoveryModal
             mode="set"
             userId={userId}
