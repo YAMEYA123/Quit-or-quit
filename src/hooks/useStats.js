@@ -231,7 +231,18 @@ export default function useStats() {
   }, [])
 
   const setRecovery = useCallback(async (code) => {
-    const uid = userIdRef.current
+    let uid = userIdRef.current
+    if (!uid) {
+      // auth callback may not have fired yet; read session from localStorage first
+      const { data: { session } } = await supabase.auth.getSession()
+      uid = session?.user?.id
+      if (!uid) {
+        // no session at all — create anonymous session now and wait for it
+        const { data } = await supabase.auth.signInAnonymously()
+        uid = data?.user?.id
+      }
+      if (uid) userIdRef.current = uid
+    }
     await setRecoveryCode(uid, code)
     markRecoveryCodeSet()
   }, [])
