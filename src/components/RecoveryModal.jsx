@@ -26,6 +26,8 @@ export default function RecoveryModal({ mode, onSet, onRestore, onClose }) {
     } catch (e) {
       if (e.message === 'NOT_AUTHED') {
         setErrMsg('登录状态异常，请刷新页面后重试')
+      } else if (e.message === 'CODE_EMPTY') {
+        setErrMsg('请输入工号后再提交')
       } else if (e.message === 'CODE_TAKEN') {
         setErrMsg('此工号已被占用，换一个试试')
       } else if (e.message === 'NOT_FOUND') {
