@@ -41,68 +41,75 @@ export default function Stats({ history, loadHistory, loadMonthHistory }) {
 
   const selectedRec = selectedDate ? monthData[selectedDate] : null
 
-  // 本月汇总
   const monthValues = Object.values(monthData)
   const monthQuit = monthValues.reduce((s, r) => s + (r.quit_count || 0), 0)
   const monthFish = monthValues.reduce((s, r) => s + (r.fish_minutes || 0), 0)
   const monthAch = monthValues.reduce((s, r) => s + (r.achievement_count || 0), 0)
-  const monthMax = monthValues.reduce((m, r) => Math.max(m, r.quit_count || 0), 0)
 
   const isCurrentMonth = viewYear === now.getFullYear() && viewMonth === now.getMonth() + 1
 
   return (
-    <div className="flex flex-col gap-5 py-5 px-4 pb-6">
+    <div className="flex flex-col gap-4 py-4 pb-6">
 
-      {/* 7天折线图 */}
-      <section>
-        <h2 className="text-sm font-semibold mb-3" style={{ color: '#888' }}>近7天趋势</h2>
-        {chartData.length > 0 ? (
-          <div style={{ background: '#fff', borderRadius: 12, padding: '12px 4px 4px', border: '1px solid #ECEAE6' }}>
-            <ResponsiveContainer width="100%" height={160}>
-              <LineChart data={chartData} margin={{ left: -20, right: 8 }}>
-                <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#AAA' }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 10, fill: '#AAA' }} axisLine={false} tickLine={false} allowDecimals={false} />
-                <Tooltip
-                  contentStyle={{ border: '1px solid #EEE', borderRadius: 8, fontSize: 12 }}
-                  cursor={{ stroke: '#EEE' }}
-                />
-                <Line type="monotone" dataKey="崩溃" stroke="#C94B1A" strokeWidth={2} dot={false} />
-                <Line type="monotone" dataKey="成就" stroke="#4A7C59" strokeWidth={2} dot={false} />
-                <Line type="monotone" dataKey="摸鱼" stroke="#5B8DB8" strokeWidth={2} dot={false} />
-              </LineChart>
-            </ResponsiveContainer>
-            <div className="flex justify-center gap-4 pb-2">
-              {[['崩溃', '#C94B1A'], ['成就', '#4A7C59'], ['摸鱼分钟', '#5B8DB8']].map(([label, color]) => (
+      {/* 近7天迷你折线图 */}
+      {chartData.length > 0 ? (
+        <div style={{ background: '#fff', borderRadius: 12, padding: '10px 4px 4px 4px', border: '1px solid #ECEAE6' }}>
+          <div className="flex items-center justify-between px-3 mb-1">
+            <span style={{ fontSize: 11, color: '#AAA', fontWeight: 600, letterSpacing: '0.05em' }}>近 7 天</span>
+            <div className="flex gap-3">
+              {[['崩溃', '#C94B1A'], ['成就', '#4A7C59'], ['摸鱼分', '#5B8DB8']].map(([label, color]) => (
                 <div key={label} className="flex items-center gap-1">
-                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: color }} />
-                  <span style={{ fontSize: 10, color: '#AAA' }}>{label}</span>
+                  <div style={{ width: 6, height: 6, borderRadius: '50%', background: color }} />
+                  <span style={{ fontSize: 10, color: '#BBB' }}>{label}</span>
                 </div>
               ))}
             </div>
           </div>
-        ) : (
-          <EmptyCard text="去敲木鱼，数据会出现在这里" />
-        )}
-      </section>
+          <ResponsiveContainer width="100%" height={110}>
+            <LineChart data={chartData} margin={{ left: -24, right: 8, top: 4, bottom: 0 }}>
+              <XAxis dataKey="date" tick={{ fontSize: 9, fill: '#CCC' }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 9, fill: '#CCC' }} axisLine={false} tickLine={false} allowDecimals={false} width={36} />
+              <Tooltip
+                contentStyle={{ border: '1px solid #EEE', borderRadius: 8, fontSize: 11 }}
+                cursor={{ stroke: '#F0EDE8' }}
+              />
+              <Line type="monotone" dataKey="崩溃" stroke="#C94B1A" strokeWidth={1.5} dot={false} />
+              <Line type="monotone" dataKey="成就" stroke="#4A7C59" strokeWidth={1.5} dot={false} />
+              <Line type="monotone" dataKey="摸鱼" stroke="#5B8DB8" strokeWidth={1.5} dot={false} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      ) : (
+        <div style={{ background: '#fff', borderRadius: 12, padding: '16px', textAlign: 'center', border: '1px solid #ECEAE6' }}>
+          <p style={{ fontSize: 12, color: '#CCC' }}>去敲木鱼，数据会出现在这里</p>
+        </div>
+      )}
 
-      {/* 日历热力图 */}
-      <section>
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-semibold" style={{ color: '#888' }}>月历</h2>
-          <div className="flex items-center gap-2">
-            <button onClick={prevMonth} style={{ color: '#555', fontSize: 16, lineHeight: 1, padding: '2px 6px' }}>‹</button>
-            <span style={{ fontSize: 13, color: '#333', fontWeight: 600, minWidth: 72, textAlign: 'center' }}>
+      {/* 月历区域 */}
+      <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #ECEAE6', overflow: 'hidden' }}>
+
+        {/* 月份导航 + 汇总数字 */}
+        <div style={{ padding: '12px 14px 10px', borderBottom: '1px solid #F0EDE8' }}>
+          <div className="flex items-center justify-between">
+            <button onClick={prevMonth} style={{ color: '#888', fontSize: 18, lineHeight: 1, padding: '2px 4px', fontWeight: 300 }}>‹</button>
+            <span style={{ fontSize: 14, color: '#333', fontWeight: 700 }}>
               {viewYear}年{viewMonth}月
             </span>
             <button
               onClick={nextMonth}
-              style={{ color: isCurrentMonth ? '#CCC' : '#555', fontSize: 16, lineHeight: 1, padding: '2px 6px' }}
+              style={{ color: isCurrentMonth ? '#DDD' : '#888', fontSize: 18, lineHeight: 1, padding: '2px 4px', fontWeight: 300 }}
               disabled={isCurrentMonth}
             >›</button>
           </div>
+          <div className="flex justify-center gap-5 mt-2">
+            <MonthStat dot="#C94B1A" label="崩溃" value={monthQuit} unit="次" />
+            <MonthStat dot="#4A7C59" label="成就" value={monthAch} unit="个" />
+            <MonthStat dot="#5B8DB8" label="摸鱼" value={monthFish} unit="分" />
+          </div>
         </div>
 
-        <div style={{ background: '#fff', borderRadius: 12, padding: 12, border: '1px solid #ECEAE6' }}>
+        {/* 日历格子 */}
+        <div style={{ padding: '10px 12px 8px' }}>
           <CalendarHeatmap
             year={viewYear}
             month={viewMonth}
@@ -113,85 +120,65 @@ export default function Stats({ history, loadHistory, loadMonthHistory }) {
         </div>
 
         {/* 图例 */}
-        <div className="flex items-center gap-2 mt-2 justify-end">
-          <span style={{ fontSize: 10, color: '#BBB' }}>少</span>
+        <div className="flex items-center gap-1.5 pb-3 pr-4 justify-end">
+          <span style={{ fontSize: 10, color: '#CCC' }}>少</span>
           {['#F0EDE8', '#F5C5A3', '#E8874A', '#C94B1A'].map(c => (
-            <div key={c} style={{ width: 10, height: 10, borderRadius: 2, background: c }} />
+            <div key={c} style={{ width: 9, height: 9, borderRadius: 2, background: c }} />
           ))}
-          <span style={{ fontSize: 10, color: '#BBB' }}>多</span>
+          <span style={{ fontSize: 10, color: '#CCC' }}>多</span>
         </div>
-      </section>
+      </div>
 
       {/* 选中日期详情 */}
       <AnimatePresence>
         {selectedDate && (
           <motion.div
             key={selectedDate}
-            initial={{ opacity: 0, y: -8 }}
+            initial={{ opacity: 0, y: -6 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.18 }}
-            style={{ background: '#1A1A1A', borderRadius: 12, padding: '14px 16px', color: '#fff' }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.15 }}
+            style={{ background: '#1A1A1A', borderRadius: 12, padding: '12px 16px', color: '#fff' }}
           >
             <div className="flex items-center justify-between mb-2">
-              <span style={{ fontSize: 13, fontWeight: 600 }}>{selectedDate.slice(5).replace('-', '月')}日</span>
-              <button onClick={() => setSelectedDate(null)} style={{ color: '#666', fontSize: 16 }}>×</button>
+              <span style={{ fontSize: 13, fontWeight: 600 }}>
+                {selectedDate.slice(5).replace('-', '月')}日
+              </span>
+              <button onClick={() => setSelectedDate(null)} style={{ color: '#555', fontSize: 18, lineHeight: 1 }}>×</button>
             </div>
             {selectedRec ? (
-              <div className="flex gap-4">
-                <Chip label="不想干了" value={`${selectedRec.quit_count || 0} 次`} color="#E8874A" />
-                <Chip label="小成就" value={`${selectedRec.achievement_count || 0} 个`} color="#4A7C59" />
-                <Chip label="摸鱼" value={`${selectedRec.fish_minutes || 0} 分`} color="#5B8DB8" />
+              <div className="flex gap-5">
+                <DetailChip label="不想干了" value={`${selectedRec.quit_count || 0} 次`} color="#E8874A" />
+                <DetailChip label="小成就" value={`${selectedRec.achievement_count || 0} 个`} color="#4A7C59" />
+                <DetailChip label="摸鱼" value={`${selectedRec.fish_minutes || 0} 分`} color="#5B8DB8" />
               </div>
             ) : (
-              <p style={{ fontSize: 12, color: '#666' }}>这天没有记录</p>
+              <p style={{ fontSize: 12, color: '#555' }}>这天没有记录</p>
             )}
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* 本月汇总 */}
-      <section>
-        <h2 className="text-sm font-semibold mb-3" style={{ color: '#888' }}>
-          {viewYear}年{viewMonth}月汇总
-        </h2>
-        <div className="grid grid-cols-2 gap-2">
-          <SummaryCard label="累计崩溃" value={monthQuit} unit="次" accent="#C94B1A" />
-          <SummaryCard label="最崩溃单日" value={monthMax} unit="次" accent="#E8874A" />
-          <SummaryCard label="摸鱼总计" value={monthFish} unit="分钟" accent="#5B8DB8" />
-          <SummaryCard label="小成就" value={monthAch} unit="个" accent="#4A7C59" />
-        </div>
-      </section>
-
     </div>
   )
 }
 
-function Chip({ label, value, color }) {
+function MonthStat({ dot, label, value, unit }) {
+  return (
+    <div className="flex items-baseline gap-1">
+      <div style={{ width: 6, height: 6, borderRadius: '50%', background: dot, flexShrink: 0, marginBottom: 1 }} />
+      <span style={{ fontSize: 11, color: '#AAA' }}>{label}</span>
+      <span style={{ fontSize: 15, fontWeight: 700, color: '#333' }}>{value}</span>
+      <span style={{ fontSize: 10, color: '#BBB' }}>{unit}</span>
+    </div>
+  )
+}
+
+function DetailChip({ label, value, color }) {
   return (
     <div className="flex flex-col gap-0.5">
       <span style={{ fontSize: 10, color: '#666' }}>{label}</span>
       <span style={{ fontSize: 15, fontWeight: 700, color }}>{value}</span>
-    </div>
-  )
-}
-
-function SummaryCard({ label, value, unit, accent }) {
-  return (
-    <div style={{ background: '#fff', borderRadius: 10, padding: '12px 14px', border: '1px solid #ECEAE6' }}>
-      <div style={{ fontSize: 11, color: '#AAA', marginBottom: 4 }}>{label}</div>
-      <div style={{ display: 'flex', alignItems: 'baseline', gap: 3 }}>
-        <span style={{ fontSize: 22, fontWeight: 700, color: accent }}>{value}</span>
-        <span style={{ fontSize: 11, color: '#AAA' }}>{unit}</span>
-      </div>
-    </div>
-  )
-}
-
-function EmptyCard({ text }) {
-  return (
-    <div style={{ background: '#fff', borderRadius: 12, padding: '24px 16px', textAlign: 'center', border: '1px solid #ECEAE6' }}>
-      <p style={{ fontSize: 13, color: '#BBB' }}>{text}</p>
     </div>
   )
 }
