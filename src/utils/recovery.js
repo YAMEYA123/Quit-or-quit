@@ -6,7 +6,8 @@ async function sha256(text) {
 }
 
 export async function setRecoveryCode(code) {
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: { session } } = await supabase.auth.getSession()
+  const user = session?.user
   if (!user) throw new Error('NOT_AUTHED')
   const hash = await sha256(code.trim())
   const { error } = await supabase.from('quit_recovery_codes').upsert(
