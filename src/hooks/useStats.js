@@ -154,5 +154,40 @@ export default function useStats() {
     }
   }, [])
 
-  return { today, history, addQuit, addAchievement, stopFish, loadHistory }
+  const loadMonthHistory = useCallback(async (year, month) => {
+    // 拼出该月所有日期的本地数据
+    const daysInMonth = new Date(year, month, 0).getDate()
+    const localMap = {}
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(d).padStart(2, '0')}`
+      const rec = loadLocal(dateStr)
+      if (rec) localMap[dateStr] = rec
+    }
+
+    const uid = userIdRef.current
+    if (!uid) return localMap
+
+    const from = `${year}-${String(month).padStart(2, '0')}-01`
+    const to = `${year}-${String(month).padStart(2, '0')}-${String(daysInMonth).padStart(2, '0')}`
+    const { data, error } = await supabase
+      .from('quit_daily_records')
+      .select('date,quit_count,achievement_count,fish_minutes')
+      .eq('user_id', uid)
+      .gte('date', from)
+      .lte('date', to)
+    if (error) { console.error('loadMonthHistory error:', error); return localMap }
+    if (data) {
+      data.forEach(r => {
+        const local = localMap[r.date] || {}
+        localMap[r.date] = {
+          quit_count: Math.max(r.quit_count || 0, local.quit_count || 0),
+          achievement_count: Math.max(r.achievement_count || 0, local.achievement_count || 0),
+          fish_minutes: Math.max(r.fish_minutes || 0, local.fish_minutes || 0),
+        }
+      })
+    }
+    return localMap
+  }, [])
+
+  return { today, history, addQuit, addAchievement, stopFish, loadHistory, loadMonthHistory }
 }

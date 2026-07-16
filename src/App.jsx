@@ -9,7 +9,7 @@ import BottomNav from './components/BottomNav'
 
 export default function App() {
   const [tab, setTab] = useState('main')
-  const { today, history, addQuit, addAchievement, stopFish, loadHistory } = useStats()
+  const { today, history, addQuit, addAchievement, stopFish, loadHistory, loadMonthHistory } = useStats()
 
   useEffect(() => {
     const handler = () => { warmup(); document.removeEventListener('touchstart', handler); document.removeEventListener('click', handler) }
@@ -34,7 +34,7 @@ export default function App() {
           <FishTimer fishMinutes={today.fish_minutes} onStop={stopFish} />
         )}
         {tab === 'stats' && (
-          <Stats history={history} loadHistory={loadHistory} />
+          <Stats history={history} loadHistory={loadHistory} loadMonthHistory={loadMonthHistory} />
         )}
       </main>
 
