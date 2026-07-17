@@ -1,16 +1,39 @@
-# React + Vite
+# 今天也不想干了吗
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+一款帮助职场人解压的 PWA 小工具。每当你想撂挑子，就来敲一下木鱼——把情绪记录下来，别让它白白消耗你。
 
-Currently, two official plugins are available:
+## 功能
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **不想干了** — 点击木鱼发泄，累计里程碑解锁专属文案（支持 66、88、233 等特殊数字）
+- **小成就** — 记录今天做到的事，正向积累
+- **摸鱼计时** — 专注休息，计时摸鱼
+- **统计** — 月历热力图 + 近 7 天趋势，回顾你的职场情绪曲线
+- **摸鱼证** — 系统自动签发专属证号（`MYZ-XXXXXX`），换设备可凭证号找回历史数据
 
-## React Compiler
+## 技术栈
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React 19 + Vite 8
+- Tailwind CSS v4
+- Framer Motion
+- Supabase（数据同步，本地优先）
+- vite-plugin-pwa（PWA 离线支持）
+- 部署于 Cloudflare Pages
 
-## Expanding the Oxlint configuration
+## 本地开发
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+```bash
+npm install
+npm run dev
+```
+
+构建：
+
+```bash
+npm run build
+```
+
+> 需要 Node.js >= 20
+
+## 数据说明
+
+数据以 `localStorage` 为主存储，Supabase 作为异步备份。设备标识存储在 `quit_device_id`，无需注册登录。摸鱼证号存储在 `quit_fish_card_no`，可跨设备找回数据。
