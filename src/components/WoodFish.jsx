@@ -40,7 +40,7 @@ export default function WoodFish({ count, onQuit }) {
       burst(cx, cy + rect.height / 2)
     }
 
-    const SPECIAL = new Set([6, 66, 88, 99, 188, 233, 250, 520, 666, 888, 999, 1000, 1314])
+    const SPECIAL = new Set([66, 88, 99, 188, 233, 250, 520, 666, 888, 999, 1000, 1314])
     if (newCount % 10 === 0 || SPECIAL.has(newCount)) {
       if (newCount >= 200) playAlarm()
       else playMilestone()
