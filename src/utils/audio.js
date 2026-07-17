@@ -23,44 +23,50 @@ export async function playWoodfish() {
     const ac = await getCtx()
     const now = ac.currentTime
 
-    // 主体共鸣：低频敲击感
-    const osc1 = ac.createOscillator()
-    const gain1 = ac.createGain()
-    osc1.connect(gain1)
-    gain1.connect(ac.destination)
-    osc1.type = 'sine'
-    osc1.frequency.setValueAtTime(180, now)
-    osc1.frequency.exponentialRampToValueAtTime(120, now + 0.35)
-    gain1.gain.setValueAtTime(0.55, now)
-    gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.35)
-    osc1.start(now)
-    osc1.stop(now + 0.35)
+    // 瞬态噪声：模拟槌头敲击的「咔」
+    const bufLen = ac.sampleRate * 0.03
+    const noiseBuf = ac.createBuffer(1, bufLen, ac.sampleRate)
+    const data = noiseBuf.getChannelData(0)
+    for (let i = 0; i < bufLen; i++) data[i] = (Math.random() * 2 - 1)
+    const noise = ac.createBufferSource()
+    noise.buffer = noiseBuf
+    const noiseFilter = ac.createBiquadFilter()
+    noiseFilter.type = 'bandpass'
+    noiseFilter.frequency.value = 1800
+    noiseFilter.Q.value = 1.2
+    const noiseGain = ac.createGain()
+    noiseGain.gain.setValueAtTime(0.5, now)
+    noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.03)
+    noise.connect(noiseFilter)
+    noiseFilter.connect(noiseGain)
+    noiseGain.connect(ac.destination)
+    noise.start(now)
 
-    // 敲击高频点击感
-    const osc2 = ac.createOscillator()
-    const gain2 = ac.createGain()
-    osc2.connect(gain2)
-    gain2.connect(ac.destination)
-    osc2.type = 'triangle'
-    osc2.frequency.setValueAtTime(900, now)
-    osc2.frequency.exponentialRampToValueAtTime(400, now + 0.06)
-    gain2.gain.setValueAtTime(0.3, now)
-    gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.06)
-    osc2.start(now)
-    osc2.stop(now + 0.06)
+    // 主体空鸣：木鱼中空的「嗵」
+    const body = ac.createOscillator()
+    const bodyGain = ac.createGain()
+    body.connect(bodyGain)
+    bodyGain.connect(ac.destination)
+    body.type = 'sine'
+    body.frequency.setValueAtTime(680, now)
+    body.frequency.exponentialRampToValueAtTime(520, now + 0.12)
+    bodyGain.gain.setValueAtTime(0.6, now)
+    bodyGain.gain.exponentialRampToValueAtTime(0.001, now + 0.22)
+    body.start(now)
+    body.stop(now + 0.22)
 
-    // 木质泛音
-    const osc3 = ac.createOscillator()
-    const gain3 = ac.createGain()
-    osc3.connect(gain3)
-    gain3.connect(ac.destination)
-    osc3.type = 'sine'
-    osc3.frequency.setValueAtTime(360, now)
-    osc3.frequency.exponentialRampToValueAtTime(240, now + 0.25)
-    gain3.gain.setValueAtTime(0.2, now)
-    gain3.gain.exponentialRampToValueAtTime(0.001, now + 0.25)
-    osc3.start(now)
-    osc3.stop(now + 0.25)
+    // 二次谐波：增加木质厚度
+    const harm = ac.createOscillator()
+    const harmGain = ac.createGain()
+    harm.connect(harmGain)
+    harmGain.connect(ac.destination)
+    harm.type = 'sine'
+    harm.frequency.setValueAtTime(1360, now)
+    harm.frequency.exponentialRampToValueAtTime(1040, now + 0.08)
+    harmGain.gain.setValueAtTime(0.15, now)
+    harmGain.gain.exponentialRampToValueAtTime(0.001, now + 0.08)
+    harm.start(now)
+    harm.stop(now + 0.08)
   } catch {}
 }
 
