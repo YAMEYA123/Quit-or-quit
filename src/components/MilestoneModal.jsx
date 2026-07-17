@@ -2,7 +2,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 
 export default function MilestoneModal({ count, onClose }) {
   const isAlarm = count >= 200
-  const emoji = count >= 500 ? '💫' : count >= 200 ? '👑' : count >= 100 ? '🚨' : count >= 50 ? '🏅' : '🎯'
+  const SPECIAL_EMOJI = { 6: '🍀', 66: '🎰', 88: '🧧', 99: '🌹', 188: '💰', 233: '🤣', 520: '💌', 666: '😈', 888: '🀄', 999: '🌙', 1314: '💍' }
+  const emoji = SPECIAL_EMOJI[count] || (count >= 500 ? '💫' : count >= 200 ? '👑' : count >= 100 ? '🚨' : count >= 50 ? '🏅' : '🎯')
 
   return (
     <AnimatePresence>
@@ -41,7 +42,22 @@ export default function MilestoneModal({ count, onClose }) {
   )
 }
 
+const MILESTONE_EXACT = {
+  6: '🍀 六六大顺！开局不想干了',
+  66: '🎰 六六大顺！顺的是辞职的心',
+  88: '🧧 八八发发！发现自己真的不想干了',
+  99: '🌹 九九归一：只剩辞职这一条路',
+  188: '💰 一八八！大吉大利，今晚辞职',
+  233: '🤣 二三三！笑死，你还没走？',
+  520: '💌 五二零！我爱你，但不爱这工作',
+  666: '😈 六六六！职场恶魔已降临',
+  888: '🀄 八八八！发发发，发现辞职最香',
+  999: '🌙 九九九！月满则亏，时候到了',
+  1314: '💍 一三一四！一生一世不想上班！',
+}
+
 function getMilestoneText(count) {
+  if (MILESTONE_EXACT[count]) return MILESTONE_EXACT[count]
   if (count >= 1000) return `🎆 第 ${count} 次！千次崩溃，永载史册！`
   if (count >= 500) return `💫 第 ${count} 次！打工人封神！立地成佛！`
   if (count >= 300) return `☢️ 第 ${count} 次！核能打工人！史无前例！`
