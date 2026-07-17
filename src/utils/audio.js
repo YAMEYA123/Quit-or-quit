@@ -18,20 +18,27 @@ export async function warmup() {
   } catch {}
 }
 
-// zone: 0=顶部(高音) ~ 1=底部(低音)；intensity: 0=慢敲 ~ 1=狂敲(变沉变干)
+// zone: 0=顶部(高音脆) ~ 1=底部(低音厚)；intensity: 0=慢敲 ~ 1=狂敲(沉闷失真)
 export async function playWoodfish(zone = 0.5, intensity = 0) {
   try {
     const ac = await getCtx()
     const now = ac.currentTime
 
-    // 根据 zone 计算基础频率（顶820Hz → 底430Hz）
-    const baseFreq = 820 - zone * 390
-    // intensity 让音调再下沉最多 80Hz，衰减缩短最多 30%
-    const freq = baseFreq - intensity * 80
-    const decay = (0.22 - zone * 0.10) * (1 - intensity * 0.3)
+    // zone 决定音调：顶部1000Hz清脆 → 底部280Hz低沉，衰减也拉开（顶短底长）
+    const baseFreq = 1000 - zone * 720
+    // intensity 让音调额外下沉最多 150Hz
+    const freq = Math.max(120, baseFreq - intensity * 150)
+    const decay = (0.15 + zone * 0.25) * (1 + intensity * 0.2)
 
-    // 瞬态噪声：槌头敲击的「咔」，顶部更脆（高频），底部更钝
-    const bufLen = Math.floor(ac.sampleRate * 0.025)
+    // lowpass 总线：intensity 越大截止频率越低，声音越闷
+    const lp = ac.createBiquadFilter()
+    lp.type = 'lowpass'
+    lp.frequency.value = 4000 - intensity * 2800
+    lp.Q.value = 0.8
+    lp.connect(ac.destination)
+
+    // 瞬态噪声：槌击「咔」声，顶部更脆（高频），底部更钝
+    const bufLen = Math.floor(ac.sampleRate * 0.03)
     const noiseBuf = ac.createBuffer(1, bufLen, ac.sampleRate)
     const data = noiseBuf.getChannelData(0)
     for (let i = 0; i < bufLen; i++) data[i] = Math.random() * 2 - 1
@@ -39,55 +46,56 @@ export async function playWoodfish(zone = 0.5, intensity = 0) {
     noise.buffer = noiseBuf
     const noiseFilter = ac.createBiquadFilter()
     noiseFilter.type = 'bandpass'
-    noiseFilter.frequency.value = 2400 - zone * 1000
-    noiseFilter.Q.value = 1.5
+    noiseFilter.frequency.value = 3200 - zone * 2000
+    noiseFilter.Q.value = 1.2 + zone
     const noiseGain = ac.createGain()
-    noiseGain.gain.setValueAtTime(0.45, now)
-    noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.025)
+    noiseGain.gain.setValueAtTime(0.55, now)
+    noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.03)
     noise.connect(noiseFilter)
     noiseFilter.connect(noiseGain)
-    noiseGain.connect(ac.destination)
+    noiseGain.connect(lp)
     noise.start(now)
 
     // 主体空鸣
     const body = ac.createOscillator()
     const bodyGain = ac.createGain()
     body.connect(bodyGain)
-    bodyGain.connect(ac.destination)
+    bodyGain.connect(lp)
     body.type = 'sine'
     body.frequency.setValueAtTime(freq, now)
-    body.frequency.exponentialRampToValueAtTime(freq * 0.75, now + decay)
-    bodyGain.gain.setValueAtTime(0.6, now)
+    body.frequency.exponentialRampToValueAtTime(freq * 0.7, now + decay)
+    bodyGain.gain.setValueAtTime(0.65, now)
     bodyGain.gain.exponentialRampToValueAtTime(0.001, now + decay)
     body.start(now)
     body.stop(now + decay + 0.01)
 
-    // 二次谐波
+    // 二次谐波（顶部更强，底部渐弱）
     const harm = ac.createOscillator()
     const harmGain = ac.createGain()
     harm.connect(harmGain)
-    harmGain.connect(ac.destination)
+    harmGain.connect(lp)
     harm.type = 'sine'
-    harm.frequency.setValueAtTime(freq * 2, now)
-    harm.frequency.exponentialRampToValueAtTime(freq * 1.5, now + decay * 0.4)
-    harmGain.gain.setValueAtTime(0.15, now)
-    harmGain.gain.exponentialRampToValueAtTime(0.001, now + decay * 0.4)
+    harm.frequency.setValueAtTime(freq * 2.1, now)
+    harm.frequency.exponentialRampToValueAtTime(freq * 1.6, now + decay * 0.35)
+    const harmVol = 0.25 - zone * 0.18
+    harmGain.gain.setValueAtTime(harmVol, now)
+    harmGain.gain.exponentialRampToValueAtTime(0.001, now + decay * 0.35)
     harm.start(now)
-    harm.stop(now + decay * 0.4 + 0.01)
+    harm.stop(now + decay * 0.35 + 0.01)
 
-    // 连击失真层：intensity > 0.5 时加入 sawtooth 磨损感
-    if (intensity > 0.5) {
+    // 连击失真层：intensity > 0.3 就开始介入，越快越响
+    if (intensity > 0.3) {
       const dist = ac.createOscillator()
       const distGain = ac.createGain()
       dist.connect(distGain)
-      distGain.connect(ac.destination)
+      distGain.connect(lp)
       dist.type = 'sawtooth'
-      dist.frequency.value = freq * 0.5
-      const distVol = (intensity - 0.5) * 0.18
+      dist.frequency.value = freq * 0.48
+      const distVol = (intensity - 0.3) * 0.38
       distGain.gain.setValueAtTime(distVol, now)
-      distGain.gain.exponentialRampToValueAtTime(0.001, now + decay * 0.6)
+      distGain.gain.exponentialRampToValueAtTime(0.001, now + decay * 0.7)
       dist.start(now)
-      dist.stop(now + decay * 0.6 + 0.01)
+      dist.stop(now + decay * 0.7 + 0.01)
     }
   } catch {}
 }
