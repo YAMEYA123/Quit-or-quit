@@ -122,6 +122,14 @@ export default function useStats() {
           setShowRestorePrompt(true)
         }
       }
+
+      // 启动时重试上次未能同步到 Supabase 的工号绑定
+      const pendingCode = localStorage.getItem('quit_recovery_pending')
+      if (pendingCode) {
+        setRecoveryCode(getDeviceId(), pendingCode)
+          .then(() => localStorage.removeItem('quit_recovery_pending'))
+          .catch(() => {})
+      }
     }
 
     init()
@@ -232,8 +240,16 @@ export default function useStats() {
   }, [])
 
   const setRecovery = useCallback(async (code) => {
-    await setRecoveryCode(getDeviceId(), code)
+    // 先本地标记，确保即使 Supabase 失败用户体验也不受影响
     markRecoveryCodeSet(code)
+    // 再尝试写入 Supabase；失败时存 pending，下次启动重试
+    try {
+      await setRecoveryCode(getDeviceId(), code)
+      localStorage.removeItem('quit_recovery_pending')
+    } catch (e) {
+      // Supabase 暂时不可用（休眠/网络），本地已记录，下次启动自动同步
+      localStorage.setItem('quit_recovery_pending', code)
+    }
   }, [])
 
   return {

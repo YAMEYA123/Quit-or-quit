@@ -3,11 +3,24 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'rec
 import { motion, AnimatePresence } from 'framer-motion'
 import CalendarHeatmap from './CalendarHeatmap'
 
+function loadLocalMonth(year, month) {
+  const daysInMonth = new Date(year, month, 0).getDate()
+  const map = {}
+  for (let d = 1; d <= daysInMonth; d++) {
+    const key = `${year}-${String(month).padStart(2, '0')}-${String(d).padStart(2, '0')}`
+    try {
+      const raw = localStorage.getItem(`quit_stats_${key}`)
+      if (raw) map[key] = JSON.parse(raw)
+    } catch {}
+  }
+  return map
+}
+
 export default function Stats({ history, loadHistory, loadMonthHistory, onSetRecovery, savedCode }) {
   const now = new Date()
   const [viewYear, setViewYear] = useState(now.getFullYear())
   const [viewMonth, setViewMonth] = useState(now.getMonth() + 1)
-  const [monthData, setMonthData] = useState({})
+  const [monthData, setMonthData] = useState(() => loadLocalMonth(now.getFullYear(), now.getMonth() + 1))
   const [selectedDate, setSelectedDate] = useState(null)
 
   useEffect(() => { loadHistory(7) }, [loadHistory])
@@ -172,10 +185,10 @@ export default function Stats({ history, loadHistory, loadMonthHistory, onSetRec
         <span style={{ fontSize: 16 }}>{savedCode ? '✅' : '🔑'}</span>
         <div>
           <div style={{ fontSize: 13, fontWeight: 600, color: '#333' }}>
-            {savedCode ? `工号：${savedCode}` : '绑定工号'}
+            {savedCode ? `代号：${savedCode}` : '绑定代号'}
           </div>
           <div style={{ fontSize: 11, color: '#AAA', marginTop: 2 }}>
-            {savedCode ? '点击可修改绑定的工号' : '换设备或清缓存后凭工号找回数据'}
+            {savedCode ? '点击可修改绑定的代号' : '换设备或清缓存后凭代号找回数据'}
           </div>
         </div>
         <span style={{ marginLeft: 'auto', color: '#CCC', fontSize: 16 }}>›</span>

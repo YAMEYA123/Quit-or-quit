@@ -1,8 +1,8 @@
 import { motion, AnimatePresence } from 'framer-motion'
 
 export default function MilestoneModal({ count, onClose }) {
-  const isAlarm = count >= 100
-  const emoji = count >= 100 ? '🚨' : count >= 50 ? '🏅' : '🎯'
+  const isAlarm = count >= 200
+  const emoji = count >= 500 ? '💫' : count >= 200 ? '👑' : count >= 100 ? '🚨' : count >= 50 ? '🏅' : '🎯'
 
   return (
     <AnimatePresence>
@@ -32,7 +32,7 @@ export default function MilestoneModal({ count, onClose }) {
               className="px-6 py-3 rounded-full text-white font-bold text-sm"
               style={{ background: isAlarm ? '#dc2626' : '#FF8FAB' }}
             >
-              {isAlarm ? '⚠️ 我知道了，我真的知道了' : '知道了，继续受苦'}
+              {isAlarm ? '👑 我已超越人类极限' : count >= 100 ? '⚠️ 我知道了，我真的知道了' : '知道了，继续受苦'}
             </button>
           </motion.div>
         </motion.div>
@@ -42,6 +42,10 @@ export default function MilestoneModal({ count, onClose }) {
 }
 
 function getMilestoneText(count) {
+  if (count >= 1000) return `🎆 第 ${count} 次！千次崩溃，永载史册！`
+  if (count >= 500) return `💫 第 ${count} 次！打工人封神！立地成佛！`
+  if (count >= 300) return `☢️ 第 ${count} 次！核能打工人！史无前例！`
+  if (count >= 200) return `👑 第 ${count} 次！你已超越人类极限！`
   if (count >= 100) return `🚨 第 ${count} 次！人类已到极限！`
   if (count >= 50) return `🏅 第 ${count} 次！你是传奇打工人！`
   if (count >= 30) return `💀 第 ${count} 次！三十而立，立于崩溃边缘`

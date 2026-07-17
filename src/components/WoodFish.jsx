@@ -41,7 +41,7 @@ export default function WoodFish({ count, onQuit }) {
     }
 
     if (newCount % 10 === 0) {
-      if (newCount >= 100) playAlarm()
+      if (newCount >= 200) playAlarm()
       else playMilestone()
       setMilestone(newCount)
     }
