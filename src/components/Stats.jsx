@@ -64,7 +64,10 @@ export default function Stats({ history, loadHistory, loadMonthHistory, onRestor
   return (
     <div className="flex flex-col gap-4 py-4 pb-6">
 
-      {/* 月份汇总：导航 + 大数字，放在最顶部 */}
+      {/* 摸鱼证卡片，放在最顶部 */}
+      <FishCard cardNo={savedCode} onRestore={onRestore} />
+
+      {/* 月份汇总：导航 + 大数字 */}
       <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #ECEAE6', padding: '14px 16px' }}>
         {/* 月份导航 */}
         <div className="flex items-center justify-between mb-3">
@@ -165,9 +168,6 @@ export default function Stats({ history, loadHistory, loadMonthHistory, onRestor
           </ResponsiveContainer>
         </div>
       )}
-
-      {/* 摸鱼证卡片 */}
-      <FishCard cardNo={savedCode} onRestore={onRestore} />
 
     </div>
   )
