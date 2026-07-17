@@ -1,8 +1,8 @@
 let ctx = null
 
-function getCtx() {
+async function getCtx() {
   if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)()
-  if (ctx.state === 'suspended') ctx.resume()
+  if (ctx.state === 'suspended') await ctx.resume()
   return ctx
 }
 
@@ -11,9 +11,9 @@ export function warmup() {
   try { getCtx() } catch {}
 }
 
-export function playWoodfish() {
+export async function playWoodfish() {
   try {
-    const ac = getCtx()
+    const ac = await getCtx()
     const now = ac.currentTime
 
     // 主体共鸣：低频敲击感
@@ -57,9 +57,9 @@ export function playWoodfish() {
   } catch {}
 }
 
-export function playAchievement() {
+export async function playAchievement() {
   try {
-    const ac = getCtx()
+    const ac = await getCtx()
     const notes = [523, 659, 784, 1047]
     notes.forEach((freq, i) => {
       const osc = ac.createOscillator()
@@ -77,9 +77,9 @@ export function playAchievement() {
   } catch {}
 }
 
-export function playFishBubble() {
+export async function playFishBubble() {
   try {
-    const ac = getCtx()
+    const ac = await getCtx()
     const osc = ac.createOscillator()
     const gain = ac.createGain()
     osc.connect(gain)
@@ -94,9 +94,9 @@ export function playFishBubble() {
   } catch {}
 }
 
-export function playMilestone() {
+export async function playMilestone() {
   try {
-    const ac = getCtx()
+    const ac = await getCtx()
     const notes = [392, 494, 587, 784, 987]
     notes.forEach((freq, i) => {
       const osc = ac.createOscillator()
@@ -114,9 +114,9 @@ export function playMilestone() {
   } catch {}
 }
 
-export function playAlarm() {
+export async function playAlarm() {
   try {
-    const ac = getCtx()
+    const ac = await getCtx()
     for (let i = 0; i < 3; i++) {
       const osc = ac.createOscillator()
       const gain = ac.createGain()
