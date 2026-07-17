@@ -1,6 +1,6 @@
 export default function BottomNav({ tab, setTab }) {
   const tabs = [
-    { id: 'main', label: '木鱼', emoji: '🪘' },
+    { id: 'main', label: '不干了', emoji: '🪘' },
     { id: 'achievement', label: '成就', emoji: '🏆' },
     { id: 'fish', label: '摸鱼', emoji: '🐟' },
     { id: 'stats', label: '统计', emoji: '📊' },
