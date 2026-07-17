@@ -1,6 +1,6 @@
 import { useRef, useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { getQuitCopy, getMilestoneCopy, getLateNightCopy } from '../utils/copy'
+import { getQuitCopy, getLateNightCopy } from '../utils/copy'
 import { playWoodfish, playMilestone, playAlarm } from '../utils/audio'
 import FloatingText, { useFloatingText } from './FloatingText'
 import Particles, { useParticles } from './Particles'
@@ -89,7 +89,7 @@ export default function WoodFish({ count, onQuit }) {
           </motion.div>
         </motion.div>
 
-        <p className="text-base" style={{ color: '#a0856a' }}>轻敲木鱼，释放压力 🙏</p>
+        <p className="text-base" style={{ color: '#a0856a' }}>点一下，让情绪有个出口 💢</p>
       </div>
     </>
   )

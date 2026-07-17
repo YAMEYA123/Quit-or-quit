@@ -78,7 +78,7 @@ export default function Achievement({ count, onAdd }) {
         className="px-10 py-5 rounded-full text-white font-bold text-xl shadow-xl"
         style={{ background: 'linear-gradient(135deg, #FFD166, #FF8FAB)' }}
       >
-        我今天好棒！🏆
+        我今天好棒！✨
       </motion.button>
 
       <AnimatePresence>

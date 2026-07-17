@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 
 export default function MilestoneModal({ count, onClose }) {
   const isAlarm = count >= 200
-  const SPECIAL_EMOJI = { 6: '🍀', 66: '🎰', 88: '🧧', 99: '🌹', 188: '💰', 233: '🤣', 520: '💌', 666: '😈', 888: '🀄', 999: '🌙', 1314: '💍' }
+  const SPECIAL_EMOJI = { 6: '🍀', 66: '🎰', 88: '🧧', 99: '🌹', 188: '💰', 233: '🤣', 250: '🦄', 520: '💌', 666: '😈', 888: '🀄', 999: '🌙', 1000: '🎆', 1314: '💍' }
   const emoji = SPECIAL_EMOJI[count] || (count >= 500 ? '💫' : count >= 200 ? '👑' : count >= 100 ? '🚨' : count >= 50 ? '🏅' : '🎯')
 
   return (
