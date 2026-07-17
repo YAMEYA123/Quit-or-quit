@@ -9,6 +9,7 @@ import MilestoneModal from './MilestoneModal'
 export default function WoodFish({ count, onQuit }) {
   const fishRef = useRef(null)
   const lastClickRef = useRef(0)
+  const clickTimesRef = useRef([])
   const [shaking, setShaking] = useState(false)
   const [milestone, setMilestone] = useState(0)
   const { texts, addText } = useFloatingText()
@@ -17,10 +18,23 @@ export default function WoodFish({ count, onQuit }) {
   const hour = new Date().getHours()
   const isLateNight = hour >= 23 || hour < 5
 
-  const handleClick = useCallback(async () => {
+  const handleClick = useCallback(async (e) => {
     const now = Date.now()
     const rapid = now - lastClickRef.current < 500
     lastClickRef.current = now
+
+    // 计算连击 intensity（1.5秒内点击次数，6次=满）
+    clickTimesRef.current.push(now)
+    clickTimesRef.current = clickTimesRef.current.filter(t => now - t < 1500)
+    const intensity = Math.min(1, clickTimesRef.current.length / 6)
+
+    // 计算点击位置 zone（0=顶部高音 ~ 1=底部低音）
+    let zone = 0.5
+    const rect = fishRef.current?.getBoundingClientRect()
+    if (rect) {
+      const clientY = e.touches?.[0]?.clientY ?? e.clientY
+      zone = Math.max(0, Math.min(1, (clientY - rect.top) / rect.height))
+    }
 
     if (rapid) {
       setShaking(true)
@@ -30,9 +44,8 @@ export default function WoodFish({ count, onQuit }) {
     await onQuit()
     const newCount = count + 1
 
-    playWoodfish()
+    playWoodfish(zone, intensity)
 
-    const rect = fishRef.current?.getBoundingClientRect()
     if (rect) {
       const cx = rect.left + rect.width / 2
       const cy = rect.top + rect.height / 4
