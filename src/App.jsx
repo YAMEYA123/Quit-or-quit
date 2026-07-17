@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { AnimatePresence } from 'framer-motion'
 import useStats from './hooks/useStats'
 import { warmup } from './utils/audio'
 import WoodFish from './components/WoodFish'
@@ -11,10 +10,10 @@ import RecoveryModal from './components/RecoveryModal'
 
 export default function App() {
   const [tab, setTab] = useState('main')
-  const [showSetRecovery, setShowSetRecovery] = useState(false)
+  const [showRestore, setShowRestore] = useState(false)
   const {
     today, history, addQuit, addAchievement, stopFish, loadHistory, loadMonthHistory,
-    showRestorePrompt, setShowRestorePrompt, restoreFromCode, setRecovery, savedCode,
+    restoreFromCode, savedCode,
   } = useStats()
 
   useEffect(() => {
@@ -39,7 +38,7 @@ export default function App() {
             history={history}
             loadHistory={loadHistory}
             loadMonthHistory={loadMonthHistory}
-            onSetRecovery={() => setShowSetRecovery(true)}
+            onRestore={() => setShowRestore(true)}
             savedCode={savedCode}
           />
         )}
@@ -47,18 +46,10 @@ export default function App() {
 
       <BottomNav tab={tab} setTab={setTab} />
 
-      {showRestorePrompt && (
+      {showRestore && (
         <RecoveryModal
-          mode="restore"
           onRestore={restoreFromCode}
-          onClose={() => setShowRestorePrompt(false)}
-        />
-      )}
-      {showSetRecovery && (
-        <RecoveryModal
-          mode="set"
-          onSet={setRecovery}
-          onClose={() => setShowSetRecovery(false)}
+          onClose={() => setShowRestore(false)}
         />
       )}
     </div>

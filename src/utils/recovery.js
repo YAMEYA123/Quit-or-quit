@@ -34,9 +34,28 @@ export function hasRecoveryCode() {
 
 export function markRecoveryCodeSet(code) {
   localStorage.setItem('quit_recovery_set', '1')
-  if (code) localStorage.setItem('quit_recovery_code', code)
+  if (code) {
+    localStorage.setItem('quit_fish_card_no', code)
+    localStorage.setItem('quit_recovery_code', code) // 向后兼容
+  }
 }
 
 export function getSavedCode() {
-  return localStorage.getItem('quit_recovery_code') || null
+  return localStorage.getItem('quit_fish_card_no') || localStorage.getItem('quit_recovery_code') || null
+}
+
+function generateFishCardNo() {
+  const n = Math.floor(Math.random() * 1000000).toString().padStart(6, '0')
+  return `MYZ-${n}`
+}
+
+export function getOrCreateFishCardNo() {
+  let no = localStorage.getItem('quit_fish_card_no')
+  if (!no) {
+    // 兼容老用户：旧代号迁移过来
+    const legacy = localStorage.getItem('quit_recovery_code')
+    no = legacy || generateFishCardNo()
+    localStorage.setItem('quit_fish_card_no', no)
+  }
+  return no
 }

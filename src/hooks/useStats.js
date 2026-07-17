@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import supabase from '../lib/supabase'
-import { setRecoveryCode, findUserByCode, hasRecoveryCode, markRecoveryCodeSet, getSavedCode } from '../utils/recovery'
+import { setRecoveryCode, findUserByCode, hasRecoveryCode, markRecoveryCodeSet, getSavedCode, getOrCreateFishCardNo } from '../utils/recovery'
 import { getDeviceId } from '../utils/deviceId'
 
 const todayStr = () => new Date().toISOString().slice(0, 10)
@@ -53,6 +53,27 @@ function loadLocalHistory(days) {
     }
   }
   return result
+}
+
+async function autoIssueFishCard(uid) {
+  for (let i = 0; i < 3; i++) {
+    const no = getOrCreateFishCardNo()
+    markRecoveryCodeSet(no) // 先本地标记，用户立刻能看到证件号
+    try {
+      await setRecoveryCode(uid, no)
+      localStorage.removeItem('quit_recovery_pending')
+      return
+    } catch (e) {
+      if (e.message === 'CODE_TAKEN') {
+        // 碰撞（百万分之一概率），清除后重新生成
+        localStorage.removeItem('quit_fish_card_no')
+        continue
+      }
+      // Supabase 暂时不可用，存 pending 下次启动重试
+      localStorage.setItem('quit_recovery_pending', no)
+      return
+    }
+  }
 }
 
 export default function useStats() {
@@ -119,7 +140,7 @@ export default function useStats() {
         if (hasLocal) {
           upsertRecord(uid, date, local)
         } else if (!hasRecoveryCode()) {
-          setShowRestorePrompt(true)
+          autoIssueFishCard(uid)
         }
       }
 

@@ -16,7 +16,7 @@ function loadLocalMonth(year, month) {
   return map
 }
 
-export default function Stats({ history, loadHistory, loadMonthHistory, onSetRecovery, savedCode }) {
+export default function Stats({ history, loadHistory, loadMonthHistory, onRestore, savedCode }) {
   const now = new Date()
   const [viewYear, setViewYear] = useState(now.getFullYear())
   const [viewMonth, setViewMonth] = useState(now.getMonth() + 1)
@@ -166,33 +166,8 @@ export default function Stats({ history, loadHistory, loadMonthHistory, onSetRec
         </div>
       )}
 
-      {/* 数据保护入口 */}
-      <button
-        onClick={onSetRecovery}
-        style={{
-          background: '#fff',
-          border: '1px solid #ECEAE6',
-          borderRadius: 12,
-          padding: '12px 16px',
-          width: '100%',
-          textAlign: 'left',
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 8,
-        }}
-      >
-        <span style={{ fontSize: 16 }}>{savedCode ? '✅' : '🔑'}</span>
-        <div>
-          <div style={{ fontSize: 13, fontWeight: 600, color: '#333' }}>
-            {savedCode ? `代号：${savedCode}` : '绑定代号'}
-          </div>
-          <div style={{ fontSize: 11, color: '#AAA', marginTop: 2 }}>
-            {savedCode ? '点击可修改绑定的代号' : '换设备或清缓存后凭代号找回数据'}
-          </div>
-        </div>
-        <span style={{ marginLeft: 'auto', color: '#CCC', fontSize: 16 }}>›</span>
-      </button>
+      {/* 摸鱼证卡片 */}
+      <FishCard cardNo={savedCode} onRestore={onRestore} />
 
     </div>
   )
@@ -215,6 +190,89 @@ function DetailChip({ label, value, color }) {
     <div className="flex flex-col gap-0.5">
       <span style={{ fontSize: 10, color: '#666' }}>{label}</span>
       <span style={{ fontSize: 15, fontWeight: 700, color }}>{value}</span>
+    </div>
+  )
+}
+
+function FishCard({ cardNo, onRestore }) {
+  const isReady = !!cardNo
+
+  return (
+    <div style={{
+      background: isReady ? '#F0F7F0' : '#FFF9F5',
+      border: `1px solid ${isReady ? '#C8E0C8' : '#ECEAE6'}`,
+      borderRadius: 12,
+      overflow: 'hidden',
+    }}>
+      {/* 证件头部 */}
+      <div style={{
+        background: isReady ? '#4A7C59' : '#CCC',
+        padding: '8px 14px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+      }}>
+        <span style={{ fontSize: 13, fontWeight: 700, color: '#fff', letterSpacing: '0.05em' }}>
+          🐟 全国打工人摸鱼证
+        </span>
+        <span style={{
+          fontSize: 10,
+          background: 'rgba(255,255,255,0.25)',
+          color: '#fff',
+          borderRadius: 4,
+          padding: '1px 6px',
+          letterSpacing: '0.05em',
+        }}>
+          {isReady ? '官方认证' : '办理中…'}
+        </span>
+      </div>
+
+      {/* 证件内容 */}
+      <div style={{ padding: '12px 14px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '56px 1fr', gap: '6px 8px', alignItems: 'baseline' }}>
+          <span style={{ fontSize: 11, color: '#888' }}>持证人</span>
+          <span style={{ fontSize: 12, color: '#555' }}>本人</span>
+
+          <span style={{ fontSize: 11, color: '#888' }}>证件编号</span>
+          <span style={{
+            fontSize: 16,
+            fontWeight: 700,
+            color: isReady ? '#2D5A3D' : '#BBB',
+            fontFamily: 'monospace',
+            letterSpacing: '0.08em',
+          }}>
+            {isReady ? cardNo : '生成中…'}
+          </span>
+
+          <span style={{ fontSize: 11, color: '#888' }}>有效期</span>
+          <span style={{ fontSize: 12, color: '#555' }}>永久（或提前离职）</span>
+
+          <span style={{ fontSize: 11, color: '#888' }}>签发机构</span>
+          <span style={{ fontSize: 12, color: '#555' }}>打工人互助总局</span>
+        </div>
+      </div>
+
+      {/* 换设备找回入口 */}
+      <button
+        onClick={onRestore}
+        style={{
+          width: '100%',
+          borderTop: `1px dashed ${isReady ? '#C8E0C8' : '#E8E8E8'}`,
+          background: 'transparent',
+          padding: '10px 14px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          cursor: 'pointer',
+          border: 'none',
+          borderTop: `1px dashed ${isReady ? '#C8E0C8' : '#E8E8E8'}`,
+        }}
+      >
+        <span style={{ fontSize: 11, color: '#888' }}>
+          📱 换设备了？凭证号把数据搬过来
+        </span>
+        <span style={{ fontSize: 14, color: '#AAA' }}>›</span>
+      </button>
     </div>
   )
 }

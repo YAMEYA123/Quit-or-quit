@@ -2,13 +2,10 @@ import { useState } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 
-// mode: 'set' | 'restore'
-export default function RecoveryModal({ mode, onSet, onRestore, onClose }) {
+export default function RecoveryModal({ onRestore, onClose }) {
   const [code, setCode] = useState('')
   const [status, setStatus] = useState('idle') // idle | loading | success | error
   const [errMsg, setErrMsg] = useState('')
-
-  const isSet = mode === 'set'
 
   const handleSubmit = async () => {
     const trimmed = code.trim()
@@ -16,24 +13,13 @@ export default function RecoveryModal({ mode, onSet, onRestore, onClose }) {
     setStatus('loading')
     setErrMsg('')
     try {
-      if (isSet) {
-        await onSet(trimmed)
-        setStatus('success')
-      } else {
-        await onRestore(trimmed)
-        // onRestore handles close on success
-      }
+      await onRestore(trimmed)
+      setStatus('success')
     } catch (e) {
-      if (e.message?.startsWith('NOT_AUTHED')) {
-        setErrMsg(`登录异常(${e.message})，请刷新后重试`)
-      } else if (e.message === 'CODE_EMPTY') {
-        setErrMsg('请输入代号后再提交')
-      } else if (e.message === 'CODE_TAKEN') {
-        setErrMsg('此代号已被占用，换一个试试')
-      } else if (e.message === 'NOT_FOUND') {
-        setErrMsg('没有找到对应的记录，请检查恢复码')
+      if (e.message === 'NOT_FOUND') {
+        setErrMsg('没找到这个证号，确认一下格式是否正确（MYZ-XXXXXX）')
       } else {
-        setErrMsg(`操作失败：${e.message}`)
+        setErrMsg(`找回失败：${e.message}`)
       }
       setStatus('error')
     }
@@ -60,38 +46,36 @@ export default function RecoveryModal({ mode, onSet, onRestore, onClose }) {
       >
         {status === 'success' ? (
           <div className="text-center py-4 flex flex-col gap-3">
-            <div style={{ fontSize: 40 }}>✅</div>
-            <p style={{ fontSize: 15, fontWeight: 600, color: '#1A1A1A' }}>恢复码已保存</p>
-            <p style={{ fontSize: 13, color: '#AAA' }}>凭代号即可在任意设备找回数据</p>
+            <div style={{ fontSize: 40 }}>🐟</div>
+            <p style={{ fontSize: 15, fontWeight: 600, color: '#1A1A1A' }}>数据已找回！</p>
+            <p style={{ fontSize: 13, color: '#AAA' }}>摸鱼记录已搬过来，继续摸 🐟</p>
             <button
               onClick={onClose}
-              style={{ marginTop: 8, background: '#1A1A1A', color: '#fff', border: 'none', borderRadius: 12, padding: '12px', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}
+              style={{ marginTop: 8, background: '#4A7C59', color: '#fff', border: 'none', borderRadius: 12, padding: '12px', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}
             >
-              好的
+              好嘞，继续摸
             </button>
           </div>
         ) : (
           <>
             <div className="flex items-center justify-between mb-4">
               <h3 style={{ fontSize: 16, fontWeight: 700, color: '#1A1A1A' }}>
-                {isSet ? '绑定代号' : '输入代号找回数据'}
+                换设备找回摸鱼记录
               </h3>
               {onClose && (
-                <button onClick={onClose} style={{ color: '#AAA', fontSize: 20, lineHeight: 1 }}>×</button>
+                <button onClick={onClose} style={{ color: '#AAA', fontSize: 20, lineHeight: 1, background: 'none', border: 'none', cursor: 'pointer' }}>×</button>
               )}
             </div>
 
             <p style={{ fontSize: 13, color: '#888', marginBottom: 16, lineHeight: 1.6 }}>
-              {isSet
-                ? '输入你的代号作为数据标识。换设备或清除缓存后，凭代号即可找回所有记录。'
-                : '输入你绑定的代号，找回历史数据。'}
+              输入你的摸鱼证号（格式：MYZ-XXXXXX），把历史数据搬到这台设备。
             </p>
 
             <input
               type="text"
               value={code}
               onChange={e => setCode(e.target.value)}
-              placeholder={isSet ? '输入代号，例如：EMP001' : '输入代号'}
+              placeholder="MYZ-XXXXXX"
               maxLength={20}
               onKeyDown={e => e.key === 'Enter' && handleSubmit()}
               style={{
@@ -100,9 +84,11 @@ export default function RecoveryModal({ mode, onSet, onRestore, onClose }) {
                 borderRadius: 10,
                 padding: '12px 14px',
                 fontSize: 15,
+                fontFamily: 'monospace',
                 color: '#1A1A1A',
                 outline: 'none',
                 marginBottom: 8,
+                boxSizing: 'border-box',
               }}
             />
 
@@ -119,18 +105,16 @@ export default function RecoveryModal({ mode, onSet, onRestore, onClose }) {
               )}
             </AnimatePresence>
 
-            {isSet && (
-              <p style={{ fontSize: 11, color: '#CCC', marginBottom: 12 }}>
-                代号就是你的数据钥匙，请确保记得它
-              </p>
-            )}
+            <p style={{ fontSize: 11, color: '#CCC', marginBottom: 12 }}>
+              在旧设备的统计页可以查到你的摸鱼证号
+            </p>
 
             <button
               onClick={handleSubmit}
               disabled={status === 'loading' || !code.trim()}
               style={{
                 width: '100%',
-                background: code.trim() ? '#1A1A1A' : '#E8E8E8',
+                background: code.trim() ? '#4A7C59' : '#E8E8E8',
                 color: code.trim() ? '#fff' : '#AAA',
                 border: 'none',
                 borderRadius: 12,
@@ -141,7 +125,7 @@ export default function RecoveryModal({ mode, onSet, onRestore, onClose }) {
                 transition: 'background 0.15s',
               }}
             >
-              {status === 'loading' ? '处理中…' : isSet ? '绑定代号' : '找回数据'}
+              {status === 'loading' ? '找回中…' : '找回我的摸鱼记录'}
             </button>
           </>
         )}
