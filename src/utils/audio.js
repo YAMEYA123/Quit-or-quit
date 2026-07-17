@@ -6,9 +6,16 @@ async function getCtx() {
   return ctx
 }
 
-// 预热 AudioContext，在页面首次点击时调用
-export function warmup() {
-  try { getCtx() } catch {}
+// iOS Safari 需要在用户手势内播放一个静音 buffer 才能真正解锁 AudioContext
+export async function warmup() {
+  try {
+    const ac = await getCtx()
+    const buf = ac.createBuffer(1, 1, 22050)
+    const src = ac.createBufferSource()
+    src.buffer = buf
+    src.connect(ac.destination)
+    src.start(0)
+  } catch {}
 }
 
 export async function playWoodfish() {
