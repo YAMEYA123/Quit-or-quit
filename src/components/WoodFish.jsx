@@ -226,28 +226,48 @@ function WoodFishSVG({ crying, cryKey }) {
       <circle cx="71" cy="95" r="4" fill="#CC3300" opacity="0.7" />
       <circle cx="71" cy="95" r="2.5" fill="#FF6644" opacity="0.6" />
 
-      {/* 眼睛 — 正常：圆点；哭泣：∩形眯眼 + 泪滴 */}
+      {/* 眼睛 — 正常：圆点；哭泣：大叉眼 + 泪柱 + 红晕 */}
       {!crying ? (
         <g>
-          <ellipse cx="122" cy="96" rx="4" ry="3.5" fill="#3A1500" />
-          <ellipse cx="122" cy="96" rx="1.5" ry="1.5" fill="#fff" opacity="0.5" />
-          <ellipse cx="94" cy="96" rx="4" ry="3.5" fill="#3A1500" />
-          <ellipse cx="94" cy="96" rx="1.5" ry="1.5" fill="#fff" opacity="0.5" />
+          <ellipse cx="122" cy="96" rx="5" ry="4.5" fill="#3A1500" />
+          <ellipse cx="121" cy="94.5" rx="2" ry="1.5" fill="#fff" opacity="0.5" />
+          <ellipse cx="94" cy="96" rx="5" ry="4.5" fill="#3A1500" />
+          <ellipse cx="93" cy="94.5" rx="2" ry="1.5" fill="#fff" opacity="0.5" />
         </g>
       ) : (
         <g key={cryKey}>
-          {/* ∩形眯眼：控制点在下方，弧线开口向下 = 哭脸眼睛 */}
-          <path d="M117 94 Q122 100 127 94" stroke="#3A1500" strokeWidth="2.8" strokeLinecap="round" fill="none" />
-          <path d="M89 94 Q94 100 99 94" stroke="#3A1500" strokeWidth="2.8" strokeLinecap="round" fill="none" />
-          {/* 泪滴：从眼下 100 落到 118，同时淡出 */}
-          <ellipse cx="121" cy="100" rx="2.2" ry="3.5" fill="#88CCEE" opacity="0.9">
-            <animate attributeName="cy" from="100" to="118" dur="0.55s" fill="freeze" />
-            <animate attributeName="opacity" from="0.9" to="0" dur="0.55s" fill="freeze" />
-          </ellipse>
-          <ellipse cx="93" cy="100" rx="2.2" ry="3.5" fill="#88CCEE" opacity="0.9">
-            <animate attributeName="cy" from="100" to="118" dur="0.55s" fill="freeze" />
-            <animate attributeName="opacity" from="0.9" to="0" dur="0.55s" fill="freeze" />
-          </ellipse>
+          {/* 红晕腮红 */}
+          <ellipse cx="136" cy="108" rx="10" ry="6" fill="#FF8FAB" opacity="0.45" />
+          <ellipse cx="80" cy="108" rx="10" ry="6" fill="#FF8FAB" opacity="0.45" />
+          {/* 大叉眼 × × */}
+          <line x1="116" y1="90" x2="128" y2="102" stroke="#3A1500" strokeWidth="4" strokeLinecap="round" />
+          <line x1="128" y1="90" x2="116" y2="102" stroke="#3A1500" strokeWidth="4" strokeLinecap="round" />
+          <line x1="88" y1="90" x2="100" y2="102" stroke="#3A1500" strokeWidth="4" strokeLinecap="round" />
+          <line x1="100" y1="90" x2="88" y2="102" stroke="#3A1500" strokeWidth="4" strokeLinecap="round" />
+          {/* 泪柱：用 framer-motion 驱动，key 保证每次重播 */}
+          <motion.rect key={`t1-${cryKey}`} x="120" y="102" width="5" height="18" rx="2.5" fill="#5BB8F0"
+            initial={{ scaleY: 0, opacity: 1, originY: 0 }}
+            animate={{ scaleY: 1, opacity: 0 }}
+            transition={{ duration: 0.5, ease: 'easeIn' }}
+            style={{ transformOrigin: '122px 102px' }}
+          />
+          <motion.rect key={`t2-${cryKey}`} x="92" y="102" width="5" height="18" rx="2.5" fill="#5BB8F0"
+            initial={{ scaleY: 0, opacity: 1 }}
+            animate={{ scaleY: 1, opacity: 0 }}
+            transition={{ duration: 0.5, ease: 'easeIn' }}
+            style={{ transformOrigin: '94px 102px' }}
+          />
+          {/* 泪滴圆头 */}
+          <motion.circle key={`d1-${cryKey}`} cx="122.5" cy="121" r="4" fill="#5BB8F0"
+            initial={{ cy: 104, opacity: 1, r: 3 }}
+            animate={{ cy: 126, opacity: 0, r: 5 }}
+            transition={{ duration: 0.5, ease: 'easeIn' }}
+          />
+          <motion.circle key={`d2-${cryKey}`} cx="94.5" cy="121" r="4" fill="#5BB8F0"
+            initial={{ cy: 104, opacity: 1, r: 3 }}
+            animate={{ cy: 126, opacity: 0, r: 5 }}
+            transition={{ duration: 0.5, ease: 'easeIn' }}
+          />
         </g>
       )}
     </svg>
