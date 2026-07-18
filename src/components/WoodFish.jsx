@@ -236,37 +236,52 @@ function WoodFishSVG({ crying, cryKey }) {
         </g>
       ) : (
         <g key={cryKey}>
-          {/* 红晕腮红 */}
+          {/* 腮红 */}
           <ellipse cx="136" cy="108" rx="10" ry="6" fill="#FF8FAB" opacity="0.45" />
           <ellipse cx="80" cy="108" rx="10" ry="6" fill="#FF8FAB" opacity="0.45" />
-          {/* 大叉眼 × ×（上移到 80~92） */}
-          <line x1="116" y1="80" x2="128" y2="92" stroke="#3A1500" strokeWidth="4" strokeLinecap="round" />
-          <line x1="128" y1="80" x2="116" y2="92" stroke="#3A1500" strokeWidth="4" strokeLinecap="round" />
-          <line x1="88" y1="80" x2="100" y2="92" stroke="#3A1500" strokeWidth="4" strokeLinecap="round" />
-          <line x1="100" y1="80" x2="88" y2="92" stroke="#3A1500" strokeWidth="4" strokeLinecap="round" />
-          {/* 泪柱：从眼下 92 开始，落程拉长，持续 1s */}
-          <motion.rect key={`t1-${cryKey}`} x="120" y="92" width="5" height="24" rx="2.5" fill="#5BB8F0"
-            initial={{ scaleY: 0, opacity: 1 }}
-            animate={{ scaleY: 1, opacity: 0 }}
-            transition={{ duration: 1.0, ease: 'easeIn' }}
-            style={{ transformOrigin: '122px 92px' }}
+          {/* 哭眯眼：∩ 弧线，眼睛被泪水压弯 */}
+          <path d="M116 84 Q122 93 128 84" stroke="#3A1500" strokeWidth="3.5" strokeLinecap="round" fill="none" />
+          <path d="M88 84 Q94 93 100 84" stroke="#3A1500" strokeWidth="3.5" strokeLinecap="round" fill="none" />
+          {/* 水龙头水流：右眼喷向右下 */}
+          <motion.path key={`r1-${cryKey}`}
+            d="M127 88 Q148 100 158 122"
+            stroke="#5BB8F0" strokeWidth="9" strokeLinecap="round" fill="none"
+            initial={{ pathLength: 0, opacity: 0.95 }}
+            animate={{ pathLength: 1, opacity: 0 }}
+            transition={{ duration: 0.9, ease: 'easeOut' }}
           />
-          <motion.rect key={`t2-${cryKey}`} x="92" y="92" width="5" height="24" rx="2.5" fill="#5BB8F0"
-            initial={{ scaleY: 0, opacity: 1 }}
-            animate={{ scaleY: 1, opacity: 0 }}
-            transition={{ duration: 1.0, ease: 'easeIn' }}
-            style={{ transformOrigin: '94px 92px' }}
+          <motion.path key={`r2-${cryKey}`}
+            d="M126 90 Q140 108 145 130"
+            stroke="#7ECEF4" strokeWidth="6" strokeLinecap="round" fill="none"
+            initial={{ pathLength: 0, opacity: 0.8 }}
+            animate={{ pathLength: 1, opacity: 0 }}
+            transition={{ duration: 0.9, ease: 'easeOut', delay: 0.05 }}
           />
-          {/* 泪滴圆头 */}
-          <motion.circle key={`d1-${cryKey}`} cx="122.5" cy="92" r="3" fill="#5BB8F0"
-            initial={{ cy: 94, opacity: 1, r: 3 }}
-            animate={{ cy: 122, opacity: 0, r: 5 }}
-            transition={{ duration: 1.0, ease: 'easeIn' }}
+          {/* 水龙头水流：左眼喷向左下 */}
+          <motion.path key={`l1-${cryKey}`}
+            d="M89 88 Q68 100 58 122"
+            stroke="#5BB8F0" strokeWidth="9" strokeLinecap="round" fill="none"
+            initial={{ pathLength: 0, opacity: 0.95 }}
+            animate={{ pathLength: 1, opacity: 0 }}
+            transition={{ duration: 0.9, ease: 'easeOut' }}
           />
-          <motion.circle key={`d2-${cryKey}`} cx="94.5" cy="92" r="3" fill="#5BB8F0"
-            initial={{ cy: 94, opacity: 1, r: 3 }}
-            animate={{ cy: 122, opacity: 0, r: 5 }}
-            transition={{ duration: 1.0, ease: 'easeIn' }}
+          <motion.path key={`l2-${cryKey}`}
+            d="M90 90 Q76 108 71 130"
+            stroke="#7ECEF4" strokeWidth="6" strokeLinecap="round" fill="none"
+            initial={{ pathLength: 0, opacity: 0.8 }}
+            animate={{ pathLength: 1, opacity: 0 }}
+            transition={{ duration: 0.9, ease: 'easeOut', delay: 0.05 }}
+          />
+          {/* 水花末端 */}
+          <motion.circle key={`sr-${cryKey}`} cx="158" cy="122" r="2" fill="#5BB8F0"
+            initial={{ r: 2, opacity: 0.9 }}
+            animate={{ r: 10, opacity: 0 }}
+            transition={{ duration: 0.4, ease: 'easeOut', delay: 0.7 }}
+          />
+          <motion.circle key={`sl-${cryKey}`} cx="58" cy="122" r="2" fill="#5BB8F0"
+            initial={{ r: 2, opacity: 0.9 }}
+            animate={{ r: 10, opacity: 0 }}
+            transition={{ duration: 0.4, ease: 'easeOut', delay: 0.7 }}
           />
         </g>
       )}
