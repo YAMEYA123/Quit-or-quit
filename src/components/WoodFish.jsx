@@ -12,6 +12,7 @@ export default function WoodFish({ count, onQuit }) {
   const clickTimesRef = useRef([])
   const [shaking, setShaking] = useState(false)
   const [crying, setCrying] = useState(false)
+  const [cryKey, setCryKey] = useState(0)
   const [milestone, setMilestone] = useState(0)
   const cryTimerRef = useRef(null)
   const { texts, addText } = useFloatingText()
@@ -44,8 +45,9 @@ export default function WoodFish({ count, onQuit }) {
     }
 
     setCrying(true)
+    setCryKey(k => k + 1)
     clearTimeout(cryTimerRef.current)
-    cryTimerRef.current = setTimeout(() => setCrying(false), 600)
+    cryTimerRef.current = setTimeout(() => setCrying(false), 700)
 
     await onQuit()
     const newCount = count + 1
@@ -104,7 +106,7 @@ export default function WoodFish({ count, onQuit }) {
             whileTap={{ scale: [1, 0.85, 1.1, 1] }}
             transition={{ duration: 0.3 }}
           >
-            <WoodFishSVG crying={crying} />
+            <WoodFishSVG crying={crying} cryKey={cryKey} />
           </motion.div>
         </motion.div>
 
@@ -114,7 +116,7 @@ export default function WoodFish({ count, onQuit }) {
   )
 }
 
-function WoodFishSVG({ crying }) {
+function WoodFishSVG({ crying, cryKey }) {
   return (
     <svg width="220" height="220" viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
@@ -224,7 +226,7 @@ function WoodFishSVG({ crying }) {
       <circle cx="71" cy="95" r="4" fill="#CC3300" opacity="0.7" />
       <circle cx="71" cy="95" r="2.5" fill="#FF6644" opacity="0.6" />
 
-      {/* 眼睛 — 正常：圆点；哭泣：弯眉眼 */}
+      {/* 眼睛 — 正常：圆点；哭泣：∩形眯眼 + 泪滴 */}
       {!crying ? (
         <g>
           <ellipse cx="122" cy="96" rx="4" ry="3.5" fill="#3A1500" />
@@ -233,18 +235,18 @@ function WoodFishSVG({ crying }) {
           <ellipse cx="94" cy="96" rx="1.5" ry="1.5" fill="#fff" opacity="0.5" />
         </g>
       ) : (
-        <g>
-          {/* 哭眯眼（弧线向上弯，眼睛被挤成一条缝） */}
-          <path d="M118 97 Q122 93 126 97" stroke="#3A1500" strokeWidth="2.5" strokeLinecap="round" fill="none" />
-          <path d="M90 97 Q94 93 98 97" stroke="#3A1500" strokeWidth="2.5" strokeLinecap="round" fill="none" />
-          {/* 泪滴 */}
-          <ellipse cx="120" cy="103" rx="2" ry="3.5" fill="#88CCEE" opacity="0.85">
-            <animate attributeName="cy" from="101" to="114" dur="0.5s" fill="freeze" />
-            <animate attributeName="opacity" from="0.85" to="0" dur="0.5s" fill="freeze" />
+        <g key={cryKey}>
+          {/* ∩形眯眼：控制点在下方，弧线开口向下 = 哭脸眼睛 */}
+          <path d="M117 94 Q122 100 127 94" stroke="#3A1500" strokeWidth="2.8" strokeLinecap="round" fill="none" />
+          <path d="M89 94 Q94 100 99 94" stroke="#3A1500" strokeWidth="2.8" strokeLinecap="round" fill="none" />
+          {/* 泪滴：从眼下 100 落到 118，同时淡出 */}
+          <ellipse cx="121" cy="100" rx="2.2" ry="3.5" fill="#88CCEE" opacity="0.9">
+            <animate attributeName="cy" from="100" to="118" dur="0.55s" fill="freeze" />
+            <animate attributeName="opacity" from="0.9" to="0" dur="0.55s" fill="freeze" />
           </ellipse>
-          <ellipse cx="92" cy="103" rx="2" ry="3.5" fill="#88CCEE" opacity="0.85">
-            <animate attributeName="cy" from="101" to="114" dur="0.5s" fill="freeze" />
-            <animate attributeName="opacity" from="0.85" to="0" dur="0.5s" fill="freeze" />
+          <ellipse cx="93" cy="100" rx="2.2" ry="3.5" fill="#88CCEE" opacity="0.9">
+            <animate attributeName="cy" from="100" to="118" dur="0.55s" fill="freeze" />
+            <animate attributeName="opacity" from="0.9" to="0" dur="0.55s" fill="freeze" />
           </ellipse>
         </g>
       )}
