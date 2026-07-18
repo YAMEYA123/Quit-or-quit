@@ -47,7 +47,7 @@ export default function WoodFish({ count, onQuit }) {
     setCrying(true)
     setCryKey(k => k + 1)
     clearTimeout(cryTimerRef.current)
-    cryTimerRef.current = setTimeout(() => setCrying(false), 700)
+    cryTimerRef.current = setTimeout(() => setCrying(false), 1300)
 
     await onQuit()
     const newCount = count + 1
@@ -229,44 +229,44 @@ function WoodFishSVG({ crying, cryKey }) {
       {/* 眼睛 — 正常：圆点；哭泣：大叉眼 + 泪柱 + 红晕 */}
       {!crying ? (
         <g>
-          <ellipse cx="122" cy="96" rx="5" ry="4.5" fill="#3A1500" />
-          <ellipse cx="121" cy="94.5" rx="2" ry="1.5" fill="#fff" opacity="0.5" />
-          <ellipse cx="94" cy="96" rx="5" ry="4.5" fill="#3A1500" />
-          <ellipse cx="93" cy="94.5" rx="2" ry="1.5" fill="#fff" opacity="0.5" />
+          <ellipse cx="122" cy="86" rx="5" ry="4.5" fill="#3A1500" />
+          <ellipse cx="121" cy="84.5" rx="2" ry="1.5" fill="#fff" opacity="0.5" />
+          <ellipse cx="94" cy="86" rx="5" ry="4.5" fill="#3A1500" />
+          <ellipse cx="93" cy="84.5" rx="2" ry="1.5" fill="#fff" opacity="0.5" />
         </g>
       ) : (
         <g key={cryKey}>
           {/* 红晕腮红 */}
           <ellipse cx="136" cy="108" rx="10" ry="6" fill="#FF8FAB" opacity="0.45" />
           <ellipse cx="80" cy="108" rx="10" ry="6" fill="#FF8FAB" opacity="0.45" />
-          {/* 大叉眼 × × */}
-          <line x1="116" y1="90" x2="128" y2="102" stroke="#3A1500" strokeWidth="4" strokeLinecap="round" />
-          <line x1="128" y1="90" x2="116" y2="102" stroke="#3A1500" strokeWidth="4" strokeLinecap="round" />
-          <line x1="88" y1="90" x2="100" y2="102" stroke="#3A1500" strokeWidth="4" strokeLinecap="round" />
-          <line x1="100" y1="90" x2="88" y2="102" stroke="#3A1500" strokeWidth="4" strokeLinecap="round" />
-          {/* 泪柱：用 framer-motion 驱动，key 保证每次重播 */}
-          <motion.rect key={`t1-${cryKey}`} x="120" y="102" width="5" height="18" rx="2.5" fill="#5BB8F0"
-            initial={{ scaleY: 0, opacity: 1, originY: 0 }}
-            animate={{ scaleY: 1, opacity: 0 }}
-            transition={{ duration: 0.5, ease: 'easeIn' }}
-            style={{ transformOrigin: '122px 102px' }}
-          />
-          <motion.rect key={`t2-${cryKey}`} x="92" y="102" width="5" height="18" rx="2.5" fill="#5BB8F0"
+          {/* 大叉眼 × ×（上移到 80~92） */}
+          <line x1="116" y1="80" x2="128" y2="92" stroke="#3A1500" strokeWidth="4" strokeLinecap="round" />
+          <line x1="128" y1="80" x2="116" y2="92" stroke="#3A1500" strokeWidth="4" strokeLinecap="round" />
+          <line x1="88" y1="80" x2="100" y2="92" stroke="#3A1500" strokeWidth="4" strokeLinecap="round" />
+          <line x1="100" y1="80" x2="88" y2="92" stroke="#3A1500" strokeWidth="4" strokeLinecap="round" />
+          {/* 泪柱：从眼下 92 开始，落程拉长，持续 1s */}
+          <motion.rect key={`t1-${cryKey}`} x="120" y="92" width="5" height="24" rx="2.5" fill="#5BB8F0"
             initial={{ scaleY: 0, opacity: 1 }}
             animate={{ scaleY: 1, opacity: 0 }}
-            transition={{ duration: 0.5, ease: 'easeIn' }}
-            style={{ transformOrigin: '94px 102px' }}
+            transition={{ duration: 1.0, ease: 'easeIn' }}
+            style={{ transformOrigin: '122px 92px' }}
+          />
+          <motion.rect key={`t2-${cryKey}`} x="92" y="92" width="5" height="24" rx="2.5" fill="#5BB8F0"
+            initial={{ scaleY: 0, opacity: 1 }}
+            animate={{ scaleY: 1, opacity: 0 }}
+            transition={{ duration: 1.0, ease: 'easeIn' }}
+            style={{ transformOrigin: '94px 92px' }}
           />
           {/* 泪滴圆头 */}
-          <motion.circle key={`d1-${cryKey}`} cx="122.5" cy="121" r="4" fill="#5BB8F0"
-            initial={{ cy: 104, opacity: 1, r: 3 }}
-            animate={{ cy: 126, opacity: 0, r: 5 }}
-            transition={{ duration: 0.5, ease: 'easeIn' }}
+          <motion.circle key={`d1-${cryKey}`} cx="122.5" cy="92" r="3" fill="#5BB8F0"
+            initial={{ cy: 94, opacity: 1, r: 3 }}
+            animate={{ cy: 122, opacity: 0, r: 5 }}
+            transition={{ duration: 1.0, ease: 'easeIn' }}
           />
-          <motion.circle key={`d2-${cryKey}`} cx="94.5" cy="121" r="4" fill="#5BB8F0"
-            initial={{ cy: 104, opacity: 1, r: 3 }}
-            animate={{ cy: 126, opacity: 0, r: 5 }}
-            transition={{ duration: 0.5, ease: 'easeIn' }}
+          <motion.circle key={`d2-${cryKey}`} cx="94.5" cy="92" r="3" fill="#5BB8F0"
+            initial={{ cy: 94, opacity: 1, r: 3 }}
+            animate={{ cy: 122, opacity: 0, r: 5 }}
+            transition={{ duration: 1.0, ease: 'easeIn' }}
           />
         </g>
       )}
