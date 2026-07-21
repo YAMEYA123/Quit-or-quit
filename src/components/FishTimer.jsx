@@ -197,13 +197,13 @@ export default function FishTimer({ fishMinutes, onStop }) {
               key="result"
               initial={{ opacity: 0, scale: 0.92 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="relative z-10 m-auto flex max-w-[300px] flex-col items-center px-5 text-center"
+              className="absolute inset-0 z-10 flex flex-col items-center justify-center px-8 pb-2 pt-10 text-center"
             >
               <div className="text-6xl">🏖️</div>
               <p className="mt-5 text-sm font-bold tracking-widest text-cyan-700">本局摸鱼报告</p>
               <p className="mt-1 text-6xl font-black tabular-nums text-slate-900">{score}</p>
               <p className="text-sm text-slate-500">条鱼 · 最高 {bestStreak} 连摸</p>
-              <p className="mt-5 rounded-2xl bg-white/70 px-5 py-3 text-sm leading-6 text-slate-600">{resultCopy(score)}</p>
+              <p className="mt-5 w-full max-w-[300px] rounded-2xl bg-white/70 px-5 py-3 text-sm leading-6 text-slate-600">{resultCopy(score)}</p>
               <motion.button
                 whileTap={{ scale: 0.94 }}
                 onClick={startRound}
