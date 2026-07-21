@@ -184,9 +184,9 @@ export default function FishTimer({ fishMinutes, onStop }) {
 
   useEffect(() => () => clearTimers(), [])
 
-  const arenaTone = level.level === 3
+  const arenaTone = phase === 'playing' && level.level === 3
     ? 'border-orange-200 bg-[#FDEBE2]'
-    : level.level === 2
+    : phase === 'playing' && level.level === 2
       ? 'border-sky-200 bg-[#DCEFF4]'
       : 'border-cyan-100 bg-[#DFF6F5]'
 
@@ -213,7 +213,7 @@ export default function FishTimer({ fishMinutes, onStop }) {
             <motion.div key="idle" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.96 }} className="absolute inset-0 z-10 flex flex-col items-center justify-center px-8 pb-2 pt-10 text-center">
               <motion.div animate={reduceMotion ? undefined : { y: [0, -8, 0], rotate: [-3, 3, -3] }} transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }} className="text-7xl">🐟</motion.div>
               <p className="mt-5 text-lg font-black text-slate-800">30 秒，能摸几条鱼？</p>
-              <p className="mt-2 max-w-[280px] text-sm leading-6 text-slate-500">三段难度自动升级，点鱼得分，看到 👔 请收手。</p>
+              <p className="mt-2 max-w-[280px] text-sm leading-6 text-slate-500">点鱼得分，看到 👔 记得收手。</p>
               <div className="mt-3 rounded-full bg-white/65 px-4 py-2 text-xs font-bold text-slate-500">本机最高纪录：{bestScore} 条</div>
               <motion.button whileTap={{ scale: 0.94 }} onClick={startRound} className="mt-6 rounded-2xl bg-slate-900 px-8 py-4 text-base font-bold text-white shadow-lg shadow-slate-500/20">开始偷偷摸鱼</motion.button>
             </motion.div>
