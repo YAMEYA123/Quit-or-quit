@@ -127,7 +127,7 @@ export default function FishTimer({ fishMinutes, onStop }) {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.96 }}
-              className="relative z-10 m-auto flex max-w-[280px] flex-col items-center px-5 text-center"
+              className="absolute inset-0 z-10 flex flex-col items-center justify-center px-8 pb-2 pt-10 text-center"
             >
               <motion.div
                 animate={{ y: [0, -8, 0], rotate: [-3, 3, -3] }}
@@ -137,7 +137,7 @@ export default function FishTimer({ fishMinutes, onStop }) {
                 🐟
               </motion.div>
               <p className="mt-5 text-lg font-black text-slate-800">30 秒，能摸几条鱼？</p>
-              <p className="mt-2 text-sm leading-6 text-slate-500">点鱼得分，看到 👔 请收手。<br />老板抓到一次，扣 2 分。</p>
+              <p className="mt-2 max-w-[280px] text-sm leading-6 text-slate-500">点鱼得分，看到 👔 请收手。<br />老板抓到一次，扣 2 分。</p>
               <motion.button
                 whileTap={{ scale: 0.94 }}
                 onClick={startRound}
