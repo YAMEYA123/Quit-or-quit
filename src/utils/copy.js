@@ -87,18 +87,30 @@ export function getQuitCopy(count) {
   return rand(tier.lines)
 }
 
-export function getAchievementCopy() {
-  const lines = [
-    '你今天真的好棒！🌟',
-    '记录下这个闪光时刻！✨',
-    '了不起！继续发光！',
-    '你值得被看见！🏆',
-    '小小成就，大大快乐！',
-    '打工人的高光时刻！',
-    '你就是职场之光！',
-    '记住今天这个感觉！',
-  ]
-  return rand(lines)
+const ACHIEVEMENT_AWARDS = [
+  { id: 'meeting-survivor', title: '会议幸存者', description: '成功开完一场没什么必要的会议', emoji: '🎖️', accent: '#B98024' },
+  { id: 'requirement-finisher', title: '需求终结者', description: '又处理完一条看起来永远改不完的需求', emoji: '⚔️', accent: '#B85F45' },
+  { id: 'emotion-artist', title: '情绪稳定艺术家', description: '内心波涛汹涌，表面依然风平浪静', emoji: '🧘', accent: '#497D72' },
+  { id: 'delivery-wizard', title: '准点交付魔法师', description: '在截止时间发现你之前完成了任务', emoji: '🪄', accent: '#765C9E' },
+  { id: 'no-eye-roll', title: '没有翻白眼奖', description: '面对离谱发言，成功守住了职业素养', emoji: '😇', accent: '#A67527' },
+  { id: 'urgent-request', title: '临时需求承受者', description: '接住了那句“这个应该很简单吧”', emoji: '🛡️', accent: '#4B7198' },
+  { id: 'water-champion', title: '带薪喝水冠军', description: '认真补水，也是工作续航的重要部分', emoji: '🥤', accent: '#397C91' },
+  { id: 'still-employed', title: '今日没有辞职奖', description: '又平稳度过了一个职业生涯观察日', emoji: '🏅', accent: '#B26A39' },
+  { id: 'instant-reply', title: '消息秒回表演奖', description: '用专业手速营造了工作饱和的气氛', emoji: '⚡', accent: '#A36A22' },
+  { id: 'desk-vibe', title: '工位气氛担当', description: '人坐在这里，团队就显得完整了一点', emoji: '🌤️', accent: '#44796D' },
+  { id: 'sheet-master', title: '表格美化大师', description: '内容先不说，边框和配色已经很专业', emoji: '📊', accent: '#586D99' },
+  { id: 'lunch-decider', title: '午饭决策终结者', description: '在有限午休里完成了最艰难的选择', emoji: '🍱', accent: '#A75F43' },
+  { id: 'offwork-guardian', title: '下班时间守护者', description: '工作可以继续，今天必须先结束', emoji: '🕕', accent: '#5D6594' },
+  { id: 'read-restraint', title: '已读不回克制奖', description: '深思熟虑后，决定稍后再深思熟虑', emoji: '🤐', accent: '#667665' },
+]
+
+export function getAchievementAward(previousId) {
+  const candidates = ACHIEVEMENT_AWARDS.filter((award) => award.id !== previousId)
+  return rand(candidates.length ? candidates : ACHIEVEMENT_AWARDS)
+}
+
+export function getAchievementAwardById(id) {
+  return ACHIEVEMENT_AWARDS.find((award) => award.id === id) || null
 }
 
 export function getFishCopy(minutes) {
