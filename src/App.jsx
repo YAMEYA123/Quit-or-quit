@@ -7,10 +7,12 @@ import FishTimer from './components/FishTimer'
 import Stats from './components/Stats'
 import BottomNav from './components/BottomNav'
 import RecoveryModal from './components/RecoveryModal'
+import FeedbackModal from './components/FeedbackModal'
 
 export default function App() {
   const [tab, setTab] = useState('main')
   const [showRestore, setShowRestore] = useState(false)
+  const [showFeedback, setShowFeedback] = useState(false)
   const {
     today, history, addQuit, addAchievement, stopFish, loadHistory, loadMonthHistory,
     restoreFromCode, savedCode,
@@ -39,6 +41,7 @@ export default function App() {
             loadHistory={loadHistory}
             loadMonthHistory={loadMonthHistory}
             onRestore={() => setShowRestore(true)}
+            onFeedback={() => setShowFeedback(true)}
             savedCode={savedCode}
           />
         )}
@@ -52,6 +55,7 @@ export default function App() {
           onClose={() => setShowRestore(false)}
         />
       )}
+      {showFeedback && <FeedbackModal onClose={() => setShowFeedback(false)} />}
     </div>
   )
 }

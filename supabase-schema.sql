@@ -86,3 +86,21 @@ create policy "allow all"    on quit_daily_records  for all    using (true) with
 create policy "allow all"    on quit_event_log      for all    using (true) with check (true);
 create policy "allow insert" on quit_recovery_codes for insert with check (true);
 create policy "allow update" on quit_recovery_codes for update using (true);
+
+
+-- ============================================================
+-- 阶段 4：轻量反馈纸条（仅匿名插入）
+-- ============================================================
+
+create table if not exists quit_feedback (
+  id         uuid primary key default gen_random_uuid(),
+  user_id    uuid,
+  category   text not null,
+  content    text not null,
+  contact    text,
+  created_at timestamptz not null default now()
+);
+alter table quit_feedback enable row level security;
+drop policy if exists "allow anonymous feedback insert" on quit_feedback;
+create policy "allow anonymous feedback insert" on quit_feedback
+  for insert with check (true);

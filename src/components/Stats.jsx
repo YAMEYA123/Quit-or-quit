@@ -16,7 +16,7 @@ function loadLocalMonth(year, month) {
   return map
 }
 
-export default function Stats({ history, loadHistory, loadMonthHistory, onRestore, savedCode }) {
+export default function Stats({ history, loadHistory, loadMonthHistory, onRestore, onFeedback, savedCode }) {
   const now = new Date()
   const [viewYear, setViewYear] = useState(now.getFullYear())
   const [viewMonth, setViewMonth] = useState(now.getMonth() + 1)
@@ -168,6 +168,20 @@ export default function Stats({ history, loadHistory, loadMonthHistory, onRestor
           </ResponsiveContainer>
         </div>
       )}
+
+      <button
+        onClick={onFeedback}
+        style={{ width: '100%', textAlign: 'left', background: '#fff', border: '1px solid #ECEAE6', borderRadius: 12, padding: '13px 15px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }}
+      >
+        <span className="flex items-center gap-2">
+          <span style={{ fontSize: 18 }}>📝</span>
+          <span>
+            <span style={{ display: 'block', fontSize: 13, color: '#333', fontWeight: 600 }}>给产品组递纸条</span>
+            <span style={{ display: 'block', marginTop: 2, fontSize: 11, color: '#AAA' }}>夸夸、吐槽、许愿，悄悄告诉我们</span>
+          </span>
+        </span>
+        <span style={{ color: '#AAA', fontSize: 18 }}>›</span>
+      </button>
 
     </div>
   )
