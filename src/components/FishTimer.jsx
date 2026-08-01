@@ -8,7 +8,7 @@ const FISH = ['🐟', '🐠', '🐡']
 const LEVELS = [
   { level: 1, minTime: 21, label: '偷偷摸鱼', notice: '老板暂时不在', spawnDelay: 850, bossRate: 0.15 },
   { level: 2, minTime: 11, label: '熟练摸鱼', notice: '走廊传来脚步声……', spawnDelay: 650, bossRate: 0.25 },
-  { level: 3, minTime: 0, label: '极限摸鱼', notice: '老板就在门口！', spawnDelay: 450, bossRate: 0.35 },
+  { level: 3, minTime: 0, label: '极限摸鱼', notice: '老板就在门口！', spawnDelay: 560, bossRate: 0.28 },
 ]
 
 function levelForTime(timeLeft) {
