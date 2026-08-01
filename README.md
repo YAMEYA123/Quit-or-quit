@@ -42,3 +42,10 @@ npm run build
 ### Supabase 初始化
 
 首次启用反馈功能时，在 Supabase SQL Editor 执行 [`sql/feedback.sql`](sql/feedback.sql)，创建 `quit_feedback` 表。该表只开放匿名插入，App 不提供读取反馈的入口。
+
+查看意见时，登录 Supabase 控制台后有两种方式：
+
+1. 打开 **Table Editor → quit_feedback**，按 `created_at` 倒序查看；
+2. 打开 **SQL Editor**，执行 [`sql/feedback-admin.sql`](sql/feedback-admin.sql)，可查看最新意见、近 7 天意见和类别统计。
+
+反馈表只允许匿名插入，建议不要给普通用户开放 Supabase 控制台权限。
