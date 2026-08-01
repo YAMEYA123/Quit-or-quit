@@ -6,6 +6,12 @@ import FloatingText, { useFloatingText } from './FloatingText'
 import Particles, { useParticles } from './Particles'
 import MilestoneModal from './MilestoneModal'
 
+// 不等距里程碑：前期给惊喜，中后期逐渐拉开间隔；不再固定每10次触发。
+const MILESTONE_STEPS = new Set([
+  3, 7, 13, 21, 34, 42, 55, 66, 78, 88, 99, 111, 131, 155, 188,
+  200, 233, 250, 300, 333, 404, 520, 666, 777, 888, 999, 1000, 1314,
+])
+
 export default function WoodFish({ count, onQuit }) {
   const fishRef = useRef(null)
   const lastClickRef = useRef(0)
@@ -61,8 +67,7 @@ export default function WoodFish({ count, onQuit }) {
       burst(cx, cy + rect.height / 2)
     }
 
-    const SPECIAL = new Set([66, 88, 99, 188, 233, 250, 520, 666, 888, 999, 1000, 1314])
-    if (newCount % 10 === 0 || SPECIAL.has(newCount)) {
+    if (MILESTONE_STEPS.has(newCount)) {
       if (newCount >= 200) playAlarm()
       else playMilestone()
       setMilestone(newCount)
